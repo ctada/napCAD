@@ -1,5 +1,5 @@
 """
-Copied from http://kieleth.blogspot.com/2014/05/webcam-with-opencv-and-tkinter.html
+OpenCV portions copied from http://kieleth.blogspot.com/2014/05/webcam-with-opencv-and-tkinter.html
 """
 
 import Tkinter as tk
@@ -32,7 +32,7 @@ def show_frame():
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
     lmain.after(10, show_frame)
-    
+
 b = tk.Button(root, text="OK", command=callback)
 b.pack()
 
