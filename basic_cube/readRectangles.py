@@ -65,14 +65,18 @@ def find_rectangles(file_path):
 	miny = min(y)
 	maxx = max(x)
 	maxy = max(y)
-	centerx = (maxx + minx)/2
+	centery = (maxx + minx)/2
+	bottomy = (centery + miny)/2
 
 	# Find the cube sides views using coordinate limits
 	cube_right = []
 	cube_left = []
 	cube_top = []
 	cube_back = []
+	cube_front = []
+	cube_bottom = []
 
+	# Use find_side for extreme sides (right, left, top, back)
 	def find_side(direction, xory):
 		side = []
 		for l in vertices:
@@ -83,14 +87,33 @@ def find_rectangles(file_path):
 			else:
 				continue
 			break
-		return side	
+		return side
+
+	# Use find closest for middle sides (front, bottom)
+	def find_closest(direction, xory):
+		closest = maxy
+		sides = []
+		for l in vertices:
+			for v in l:
+				if v[0][xory] < closest:
+					closest = v[0][xory]
+		side = find_side(closest, 1)
+		return side
+
+		closest = myList[0]
+		for i in range(1, len(myList)):
+			if abs(i - myNumber) < closest:
+				closest = i
+		return closest	
 
 	cube_right = find_side(maxx, 0)
 	cube_left = find_side(minx, 0)
 	cube_top = find_side(maxy, 1)
 	cube_back = find_side(miny, 1)
+	cube_front = find_closest(centery, 1) 
+	cube_bottom = find_closest(bottomy, 1)
 
-	return cube_right, cube_left, cube_top, cube_back
+	return cube_right, cube_left, cube_top, cube_back, cube_front, cube_bottom
 
 	
 def normalize_sides(sides):
@@ -127,8 +150,10 @@ def normalize_sides(sides):
 	squared_left = square_sides(sides[1])
 	squared_top = square_sides(sides[2])
 	squared_back = square_sides(sides[3])
+	squared_front = square_sides(sides[4])
+	squared_bottom = square_sides(sides[5])
 
-	return squared_right, squared_left, squared_top, squared_back
+	return squared_right, squared_left, squared_top, squared_back, squared_front, squared_bottom
 
 sides = find_rectangles("cube.jpg")
 print normalize_sides(sides)
