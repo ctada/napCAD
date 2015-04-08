@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.spatial import Delaunay
+from scipy.spatial import Delaunay, ConvexHull
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import stlwriter # found at http://code.activestate.com/recipes/578246-stl-writer/
@@ -9,7 +9,7 @@ def triangulation(x, y, z):
 	Delaunay triangulation and plotting
 	"""
 	points = np.array([x, y, z]).T
-	tri = Delaunay(points, qhull_options='QJ Pp')
+	tri = ConvexHull(points, qhull_options='QJ Pp')
 	# p= points[tri.vertices] or #p= points[tri.convex_hull] to access points, note: tri.simplices = tri.vertices
 	
 	# FOR VISUALIZATION PURPOSES
@@ -50,3 +50,4 @@ if __name__ == "__main__":
 
 	vert = triangulation(x,y,z)
 	stl_write(filename, vert)
+	#test
