@@ -1,4 +1,3 @@
-from stl import mesh
 import numpy as np
 from scipy.spatial import Delaunay
 import matplotlib.pyplot as plt
@@ -27,44 +26,6 @@ def triangulation(x, y, z):
 	plt.show()
 
 	return points[tri.simplices]
-	 
-	#print 'vertices', points[tri.vertices]
-def np_stl(): 
-	"""
-	Save to STL, based off of numpy-stl library
-	"""
-	# Using an existing stl file:
-	mesh = mesh.Mesh.from_file('testcube_10mm.stl')
-
-	# Or creating a new mesh:
-	#VERTICE_COUNT = 10
-	#data = np.zeros(VERTICE_COUNT, dtype=mesh.Mesh.dtype)
-	#mesh = mesh.Mesh(data, remove_empty_areas=False)
-
-	# The mesh normals (calculated automatically)
-	mesh.normals
-	# The mesh vectors
-	mesh.v0, mesh.v1, mesh.v2
-
-	#for i in range(len(mesh.v0)):
-		# multiple v0, v1, and v2 for scaling and avoiding pyramids
-	#	mesh.v0[i] *= 2#*numpy.random.randint(-i,i+1)
-	#	mesh.v1[i] *= 2 #*numpy.random.randint(-i, i+1)
-	#	mesh.v2[i] *= 3
-
-
-	# Accessing individual points (concatenation of v0, v1 and v2 in triplets)
-	mesh.points[0] == mesh.v0[0]
-	mesh.points[1] == mesh.v1[0]
-	mesh.points[2] == mesh.v2[0]
-	mesh.points[3] == mesh.v0[1]
-	#mesh.update_normals()
-
-	mesh.save('new_stl.stl')
-
-	print 'points', mesh.points
-	print 'data', mesh.data
-	#print 'v0', mesh.v0
 
 def stl_write(cube_vertices): 
     with open('cubeTest.stl', 'wb') as fp:
