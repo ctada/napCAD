@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial import Delaunay
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import stlwriter
+import stlwriter # found at http://code.activestate.com/recipes/578246-stl-writer/
 
 def triangulation(x, y, z):
 	"""
