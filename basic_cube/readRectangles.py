@@ -31,7 +31,7 @@ def find_rectangles(file_path):
 	edged = cv2.Canny(binary, 30, 200)
 
 	# Find the 10 contours within the edged image
-	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	_,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
 	rectCnt = None
 	count = 0
@@ -136,14 +136,15 @@ def normalize_sides(sides):
 			x.append(vert[0][0])
 			y.append(vert[0][1])
 
-		minx = min(x)
-		miny = min(y)
-		maxx = max(x)
-		maxy = max(y)
+		minx = 0
+		miny = 0
+		maxx = max(x)-min(x)
+		maxy = max(y)-min(y)
 
 		# Construct new squared vertex set with format |1 2|
 		#											   |3 4|
-		squared_side = [[minx, maxy], [maxx, maxy], [minx, miny], [maxx, miny]]
+		squared_side = [[minx,miny],[maxx,miny],[maxx,maxy],[minx,maxy]]
+		#squared_side = [[minx, maxy], [maxx, maxy], [minx, miny], [maxx, miny]]
 		return squared_side
 
 	squared_right = square_sides(sides[0])
@@ -153,7 +154,9 @@ def normalize_sides(sides):
 	squared_front = square_sides(sides[4])
 	squared_bottom = square_sides(sides[5])
 
-	return squared_right, squared_left, squared_top, squared_back, squared_front, squared_bottom
+	return "front:",squared_front,"left:",squared_left,"back:",squared_back,"right:",squared_right,"top:",squared_top,"bottom:",squared_bottom
+
+	#return squared_right, squared_left, squared_top, squared_back, squared_front, squared_bottom
 
 sides = find_rectangles("cube.jpg")
 print normalize_sides(sides)

@@ -22,6 +22,7 @@ lmain.pack()
 
 def callback():
     print "click!"
+    cv2.imwrite('pic.jpg', img)
 
 def show_frame():
     _, frame = cap.read()
