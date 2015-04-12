@@ -19,15 +19,21 @@ root = tk.Tk()
 #root.bind('<escape>', lambda e: root.quit())
 lmain = tk.Label(root)
 lmain.pack()
+curFrame = None
 
 def callback():
-    print "click!"
+    _, frame = cap.read()
+    frame = cv2.flip(frame, 1)
+    curFrame = frame
+    cv2.imwrite("napSketch.jpg",curFrame)
+    print "Photo Taken"
 
 def show_frame():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
     img = Image.fromarray(cv2image)
+    curFrame = cv2image
     imgtk = ImageTk.PhotoImage(image=img)
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
