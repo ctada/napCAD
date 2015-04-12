@@ -34,6 +34,7 @@ curFrame = None
 
 
 def callback():
+<<<<<<< HEAD
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
     curFrame = frame
@@ -51,6 +52,10 @@ def callback():
     canvas = FigureCanvasTkAgg(fig, master=root)
     canvas.show()
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+=======
+    print "click!"
+    cv2.imwrite('pic.jpg', img)
+>>>>>>> 8b15addb20847b8fad4c1ce30551f94fa29313df
 
     toolbar = NavigationToolbar2TkAgg( canvas, root )
     toolbar.update()
