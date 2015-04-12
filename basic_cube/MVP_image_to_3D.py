@@ -28,7 +28,8 @@ def find_rectangles(file_path):
 	edged = cv2.Canny(binary, 30, 200)
 
 	# Find the 10 contours within the edged image
-	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	#(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	_,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
 	rectCnt = None
 	count = 0
@@ -267,14 +268,25 @@ def make_shape(front,left_side,back,right_side,top,bottom):
 	fig = Figure(data=data, layout=layout)
 	plot_url = py.plot(fig, filename='simple-3d-scatter')
 
-	return "front:",front_3D,"left:",left_side_3D,"back:",back_3D,"right:",right_side_3D,"top:",top_3D,"bottom:",bottom_3D
+	return front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D
+	
+def output_xyz(front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D):
+	list_tuples = make_shape(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
+	x = list()
+	y = list()
+	z = list()
+	for i in list_tuples: 
+		lists = [i for sub in list_tuples for i in sub]
+	for m,(j,k,l) in enumerate(lists):
+		x.append(j)
+		y.append(k)
+		z.append(l)
+	return x,y,z
 
 #define each face for testing purposes
 sides = find_rectangles("cube.jpg")
-# side_lists = normalize_sides(sides)
-side_lists = normalize(sides)
-
-
+side_lists = normalize_sides(sides)
+# side_lists = normalize(sides)
 
 front_2D = side_lists[0]
 left_side_2D = side_lists[1]
@@ -284,4 +296,4 @@ top_2D = side_lists[4]
 bottom_2D = side_lists[5]
 
 #convert coordinates
-print make_shape(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
+print output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
