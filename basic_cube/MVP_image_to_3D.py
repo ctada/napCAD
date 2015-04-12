@@ -3,6 +3,7 @@ import numpy as np
 import pprint
 import plotly.plotly as py
 from plotly.graph_objs import *
+from normalizer import normalize
 
 # Get image
 def find_rectangles(file_path):
@@ -270,7 +271,10 @@ def make_shape(front,left_side,back,right_side,top,bottom):
 
 #define each face for testing purposes
 sides = find_rectangles("cube.jpg")
-side_lists = normalize_sides(sides)
+# side_lists = normalize_sides(sides)
+side_lists = normalize(sides)
+
+
 
 front_2D = side_lists[0]
 left_side_2D = side_lists[1]
