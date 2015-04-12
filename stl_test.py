@@ -7,15 +7,23 @@ import stlwriter # found at http://code.activestate.com/recipes/578246-stl-write
 def triangulation(x, y, z):
 	"""
 	Triangulation with ConvexHull and plotting
+
 	"""
 	points = np.array([x, y, z]).T
 	tri = ConvexHull(points, qhull_options='QJ Pp')
 	# p= points[tri.vertices] or #p= points[tri.convex_hull] to access points, note: tri.simplices = tri.vertices
+
+	return points[tri.simplices]
+
+def tri_vis(x,y,z)	:
+	points = np.array([x, y]).T
+	tri = ConvexHull(points, qhull_options='QJ Pp')
 	
 	# FOR VISUALIZATION PURPOSES
-	#fig = plt.figure()
-	#ax = fig.add_subplot(1, 1, 1, projection='3d')
-	#ax.plot_trisurf(x, y, z, triangles=tri.simplices, cmap=plt.cm.Spectral) #tri.simplices references the faces of the triangles
+	# to plot 3D representation, take out the z in the np array above
+	fig = plt.figure()
+	ax = fig.add_subplot(1, 1, 1, projection='3d')
+	ax.plot_trisurf(x, y, z, triangles=tri.simplices, cmap=plt.cm.Spectral) #tri.simplices references the faces of the triangles
 	
 	#for j, p in enumerate(points):
 	#	    ax.text(p[0]-0.03, p[1]+0.03, z[j], j, ha='right') # label the points
@@ -25,7 +33,7 @@ def triangulation(x, y, z):
 
 	#plt.show()
 
-	return points[tri.simplices]
+	return fig
 
 def stl_write(file_name, cube_vertices): 
     with open(file_name, 'wb') as fp:
@@ -48,4 +56,5 @@ if __name__ == "__main__":
 		z = [0,0,1,0,0]
 
 	vert = triangulation(x,y,z)
+	tri_vis(x,y,z)
 	stl_write(filename, vert)
