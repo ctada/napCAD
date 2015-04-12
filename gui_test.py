@@ -59,7 +59,7 @@ def callback():
 
     #q = tk.Button(master=root, text='Quit', command=_quit).pack(side=tk.BOTTOM)
     save_as(stl) #save STL instead of text
-    #_quit
+    _quit()
     
 def show_frame():
     _, frame = cap.read()
@@ -82,6 +82,8 @@ def save_as(content):
     stl_test.stl_write(f,content)
     #root.quit()
 def _quit():
+    cap.release()
+    cv2.destroyAllWindows()
     root.quit()     # stops mainloop
     root.destroy()  # this is necessary on Windows to prevent
                     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
