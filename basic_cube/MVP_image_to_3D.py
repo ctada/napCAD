@@ -29,7 +29,7 @@ def find_rectangles(file_path):
 
 	# Find the 10 contours within the edged image
 	#(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-	_,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	(cnts,_) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
 	rectCnt = None
 	count = 0
@@ -295,5 +295,7 @@ right_side_2D = side_lists[3]
 top_2D = side_lists[4]
 bottom_2D = side_lists[5]
 
+perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
+
 #convert coordinates
-print output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
+print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)

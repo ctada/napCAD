@@ -31,7 +31,7 @@ def find_rectangles(file_path):
 	edged = cv2.Canny(binary, 30, 200)
 
 	# Find the 10 contours within the edged image
-	_,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	(cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
 	rectCnt = None
 	count = 0
