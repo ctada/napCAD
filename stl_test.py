@@ -1,9 +1,5 @@
 import numpy as np
-<<<<<<< HEAD
 from scipy.spatial import Delaunay, ConvexHull
-=======
-from scipy.spatial import Delaunay
->>>>>>> 8b15addb20847b8fad4c1ce30551f94fa29313df
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import stlwriter # found at http://code.activestate.com/recipes/578246-stl-writer/
@@ -13,7 +9,6 @@ def triangulation(x, y, z):
 	Delaunay triangulation and plotting
 	"""
 	points = np.array([x, y, z]).T
-<<<<<<< HEAD
 	tri = ConvexHull(points, qhull_options='QJ Pp')
 	# p= points[tri.vertices] or #p= points[tri.convex_hull] to access points, note: tri.simplices = tri.vertices
 	return points[tri.simplices]
@@ -27,16 +22,6 @@ def tri_vis(x,y,z)	:
 	fig = plt.figure()
 	ax = fig.add_subplot(1, 1, 1, projection='3d')
 	ax.plot_trisurf(x, y, z, triangles=tri.simplices, cmap=plt.cm.Spectral) #tri.simplices references the faces of the triangles
-=======
-	tri = Delaunay(points, qhull_options='QJ Pp')
-	# p= points[tri.vertices] or #p= points[tri.convex_hull] to access points, note: tri.simplices = tri.vertices
-	
-	# FOR VISUALIZATION PURPOSES
-	# to plot 3D representation, take out the z in the np array above
-	#fig = plt.figure()
-	#ax = fig.add_subplot(1, 1, 1, projection='3d')
-	#ax.plot_trisurf(x, y, z, triangles=tri.simplices, cmap=plt.cm.Spectral) #tri.simplices references the faces of the triangles
->>>>>>> 8b15addb20847b8fad4c1ce30551f94fa29313df
 	
 	#for j, p in enumerate(points):
 	#	    ax.text(p[0]-0.03, p[1]+0.03, z[j], j, ha='right') # label the points
@@ -45,12 +30,8 @@ def tri_vis(x,y,z)	:
 	#	    ax.text(p[0], p[1], z[j],'#%d' % j, ha='center') # label triangles
 
 	#plt.show()
-<<<<<<< HEAD
-	return fig
-=======
 
-	return points[tri.simplices]
->>>>>>> 8b15addb20847b8fad4c1ce30551f94fa29313df
+	return fig
 
 def stl_write(file_name, cube_vertices): 
     with open(file_name, 'wb') as fp:
@@ -73,10 +54,5 @@ if __name__ == "__main__":
 		z = [0,0,1,0,0]
 
 	vert = triangulation(x,y,z)
-<<<<<<< HEAD
 	tri_vis(x,y,z)
 	stl_write(filename, vert)
-	
-=======
-	stl_write(filename, vert)
->>>>>>> 8b15addb20847b8fad4c1ce30551f94fa29313df
