@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install python-imaging-tk
 import stl_test
+from basic_cube import MVP_image_to_3D as mvp
 import matplotlib, sys
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
@@ -40,10 +41,22 @@ def callback():
     cv2.imwrite("napSketch.jpg",curFrame)
     print "Photo taken"
 
-    #get calculated point things
-    x = [0,0,0.5,1,1]
-    y = [0,1,0.5,0,1]
-    z = [0,0,1,0,0]
+    # use example image instead of photo taken by camera
+    sides = mvp.find_rectangles("basic_cube/cube.jpg")
+    side_lists = mvp.normalize_sides(sides)
+    # side_lists = normalize(sides)
+
+    front_2D = side_lists[0]
+    left_side_2D = side_lists[1]
+    back_2D = side_lists[2]
+    right_side_2D = side_lists[3]
+    top_2D = side_lists[4]
+    bottom_2D = side_lists[5]
+
+    perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
+
+    #convert coordinates
+    x,y,z= mvp.output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
     #triangulate
     stl = stl_test.triangulation(x,y,z)
     fig = stl_test.tri_vis(x,y,z)
