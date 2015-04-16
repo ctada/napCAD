@@ -47,7 +47,7 @@ def find_rectangles(file_path):
 			count += 1
 
 	# Draw the rectangles over the image
-	cv2.imshow("Rectangles", image)
+	#cv2.imshow("Rectangles", image)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
@@ -283,19 +283,23 @@ def output_xyz(front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D):
 		z.append(l)
 	return x,y,z
 
-#define each face for testing purposes
-sides = find_rectangles("cube.jpg")
-side_lists = normalize_sides(sides)
-# side_lists = normalize(sides)
+def example():
+	#define each face for testing purposes
+	sides = find_rectangles("cube.jpg")
+	side_lists = normalize_sides(sides)
+	# side_lists = normalize(sides)
 
-front_2D = side_lists[0]
-left_side_2D = side_lists[1]
-back_2D = side_lists[2]
-right_side_2D = side_lists[3]
-top_2D = side_lists[4]
-bottom_2D = side_lists[5]
+	front_2D = side_lists[0]
+	left_side_2D = side_lists[1]
+	back_2D = side_lists[2]
+	right_side_2D = side_lists[3]
+	top_2D = side_lists[4]
+	bottom_2D = side_lists[5]
 
-perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
+	perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
 
-#convert coordinates
-print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
+	#convert coordinates
+	print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
+
+if __name__=="main":
+	example()
