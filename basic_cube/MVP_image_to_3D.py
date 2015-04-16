@@ -47,7 +47,7 @@ def find_rectangles(file_path):
 			count += 1
 
 	# Draw the rectangles over the image
-	cv2.imshow("Rectangles", image)
+	#cv2.imshow("Rectangles", image)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
