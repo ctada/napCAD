@@ -3,7 +3,7 @@ OpenCV portions copied from http://kieleth.blogspot.com/2014/05/webcam-with-open
 """
 
 import Tkinter as tk
-import tkFileDialog, Tkconstants
+import tkFileDialog, Tkconstants, tkMessageBox
 import cv2
 import numpy as np
 from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install python-imaging-tk
@@ -26,41 +26,32 @@ if not cap.isOpened():
 
 root = tk.Tk()
 root.title('napCAD')
+def handler():
+    if tkMessageBox.askokcancel("Quit?", "Are you sure you want to quit?"):
+        root.quit()
+root.protocol("WM_DELETE_WINDOW", handler)
+root.bind('<Escape>', lambda e: root.quit())
 
-#root.bind('<escape>', lambda e: root.quit())
 lmain = tk.Label(root)
 lmain.pack()
 
 curFrame = None
 
-
-def callback():
+def processImg():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
     curFrame = frame
     cv2.imwrite("napSketch.jpg",curFrame)
-    print "Photo taken"
 
-    # use example image instead of photo taken by camera
     sides = mvp.find_rectangles("basic_cube/cube.jpg")
     side_lists = mvp.normalize_sides(sides)
-    # side_lists = normalize(sides)
-
-    front_2D = side_lists[0]
-    left_side_2D = side_lists[1]
-    back_2D = side_lists[2]
-    right_side_2D = side_lists[3]
-    top_2D = side_lists[4]
-    bottom_2D = side_lists[5]
-
     perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
 
     #convert coordinates
     x,y,z= mvp.output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
     #triangulate
-    stl = stl_test.triangulation(x,y,z)
-    fig = stl_test.tri_vis(x,y,z)
-
+    stl, fig = stl_test.triangulation(x,y,z)
+    
     canvas = FigureCanvasTkAgg(fig, master=root)
     canvas.show()
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -70,9 +61,10 @@ def callback():
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.mpl_connect('key_press_event', on_key_event)
 
-    #q = tk.Button(master=root, text='Quit', command=_quit).pack(side=tk.BOTTOM)
+    
+    #s = tk.Button(master=root, text='Save As', command=save_as(stl)).pack(side=tk.TOP)
     save_as(stl) #save STL instead of text
-    _quit()
+    
     
 def show_frame():
     _, frame = cap.read()
@@ -100,13 +92,18 @@ def _quit():
     root.quit()     # stops mainloop
     root.destroy()  # this is necessary on Windows to prevent
                     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
+def handler():
+    if tkMessageBox.askokcancel("Quit?", "Are you sure you want to quit?"):
+        root.quit()
+
 def on_key_event(event):
     print('you pressed %s'%event.key)
     key_press_handler(event, canvas, toolbar)
 
 #button_opt = {'fill': Tkconstants.BOTH, 'padx': 5, 'pady': 5}
-b = tk.Button(root, text ="Convert to STL", command = callback).pack()
+b = tk.Button(root, text ="Preview 3D Model", command = processImg).pack()
 q = tk.Button(master=root, text='Quit', command=_quit).pack(side=tk.BOTTOM)
 
 show_frame()
 root.mainloop()
+
