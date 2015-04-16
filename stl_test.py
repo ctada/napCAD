@@ -16,7 +16,7 @@ def triangulation(x, y, z):
 	return points[tri.simplices]
 
 def tri_vis(x,y,z)	:
-	points = np.array([x, y]).T
+	points = np.array([x, y, z]).T
 	tri = ConvexHull(points, qhull_options='QJ Pp')
 	
 	# FOR VISUALIZATION PURPOSES
