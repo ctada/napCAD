@@ -59,7 +59,8 @@ def main(sides,fold_lines):
 	folded_sides = list()
 	for i in sides:
 		folded_sides.append(transform_side(i,fold_lines,theta))
-	return further_transform_check(folded_sides,fold_lines,theta)
+	return folded_sides
+	#return further_transform_check(folded_sides,fold_lines,theta)
 
 fold_lines = ([0,0],[6,0])
 all_sides = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
