@@ -28,7 +28,7 @@ def find_rectangles(file_path):
 	edged = cv2.Canny(binary, 30, 200)
 
 	# Find the 10 contours within the edged image
-	#(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	#_,cnts, _ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	(cnts,_) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
 	rectCnt = None
@@ -47,7 +47,7 @@ def find_rectangles(file_path):
 			count += 1
 
 	# Draw the rectangles over the image
-	cv2.imshow("Rectangles", image)
+	#cv2.imshow("Rectangles", image)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
@@ -272,7 +272,7 @@ def make_shape(front,left_side,back,right_side,top,bottom):
 	return front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D
 	
 def output_xyz(front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D):
-	list_tuples = make_shape(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
+	list_tuples = make_shape(front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D)
 	x = list()
 	y = list()
 	z = list()
@@ -284,19 +284,23 @@ def output_xyz(front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D):
 		z.append(l)
 	return x,y,z
 
-#define each face for testing purposes
-sides = find_rectangles("cube.jpg")
-side_lists = normalize_sides(sides)
-# side_lists = normalize(sides)
+def example():
+	#define each face for testing purposes
+	sides = find_rectangles("cube.jpg")
+	side_lists = normalize_sides(sides)
+	# side_lists = normalize(sides)
 
-front_2D = side_lists[0]
-left_side_2D = side_lists[1]
-back_2D = side_lists[2]
-right_side_2D = side_lists[3]
-top_2D = side_lists[4]
-bottom_2D = side_lists[5]
+	front_2D = side_lists[0]
+	left_side_2D = side_lists[1]
+	back_2D = side_lists[2]
+	right_side_2D = side_lists[3]
+	top_2D = side_lists[4]
+	bottom_2D = side_lists[5]
 
-perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
+	perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
 
-#convert coordinates
-print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
+	#convert coordinates
+	print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
+
+if __name__=="__main__":
+	example()
