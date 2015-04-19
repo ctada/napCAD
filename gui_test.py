@@ -16,34 +16,17 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 
-width, height = 800, 600
-cap = cv2.VideoCapture(0)
-#cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-
-if not cap.isOpened(): 
-	cap.open()
-
-root = tk.Tk()
-root.title('napCAD')
-def handler():
-    if tkMessageBox.askokcancel("Quit?", "Are you sure you want to quit?"):
-        root.quit()
-root.protocol("WM_DELETE_WINDOW", handler)
-root.bind('<Escape>', lambda e: root.quit())
-
-lmain = tk.Label(root)
-lmain.pack()
-
-curFrame = None
 
 def processImg():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
     curFrame = frame
     cv2.imwrite("napSketch.jpg",curFrame)
+    d= VertexDialog(root)
+    root.wait_window(d.top)
+    vertNum = d.getNum()
 
-    sides = mvp.find_rectangles("basic_cube/cube.jpg")
+    sides = mvp.find_rectangles("basic_cube/cube.jpg") #change to napSketch.jpg, incorportate vertNum
     side_lists = mvp.normalize_sides(sides)
     perfect_side=[[0,0],[side_lists[0][1][0],0],[side_lists[0][1][0],side_lists[0][1][0]],[0,side_lists[0][1][0]]]
 
@@ -59,11 +42,11 @@ def processImg():
     toolbar = NavigationToolbar2TkAgg( canvas, root )
     toolbar.update()
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    canvas.mpl_connect('key_press_event', on_key_event)
-
+    #canvas.mpl_connect('key_press_event', on_key_event)
+    lmain.after(0)
     
-    #s = tk.Button(master=root, text='Save As', command=save_as(stl)).pack(side=tk.TOP)
-    save_as(stl) #save STL instead of text
+    s = tk.Button(master=root, text='Save As', command=save_as(stl)).pack(side=tk.TOP)
+    #save_as(stl) #save STL instead of text
     
     
 def show_frame():
@@ -96,9 +79,46 @@ def handler():
     if tkMessageBox.askokcancel("Quit?", "Are you sure you want to quit?"):
         root.quit()
 
-def on_key_event(event):
-    print('you pressed %s'%event.key)
-    key_press_handler(event, canvas, toolbar)
+#def on_key_event(event):
+#    print('you pressed %s'%event.key)
+#    key_press_handler(event, canvas, toolbar)
+
+class VertexDialog:
+    def __init__(self, parent):
+        self.inputVertNum = 0
+        top = self.top = tk.Toplevel(parent)
+        tk.Label(top, text="Please enter the number of vertices in the geometry.").pack()
+        self.e = tk.Entry(top)
+        self.e.pack(padx=5)
+
+        b = tk.Button(top, text="OK", command=self.ok)
+        b.pack(pady=5)
+
+    def ok(self):
+        self.inputVertNum= self.e.get()
+        self.top.destroy()
+
+    def getNum(self):
+        return self.inputVertNum
+
+width, height = 800, 600
+cap = cv2.VideoCapture(0)
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+if not cap.isOpened(): 
+    cap.open()
+
+root = tk.Tk()
+root.title('napCAD')
+
+root.protocol("WM_DELETE_WINDOW", handler)
+root.bind('<Escape>', lambda e: root.quit())
+
+lmain = tk.Label(root)
+lmain.pack()
+
+curFrame = None
 
 #button_opt = {'fill': Tkconstants.BOTH, 'padx': 5, 'pady': 5}
 b = tk.Button(root, text ="Preview 3D Model", command = processImg).pack()
@@ -106,4 +126,5 @@ q = tk.Button(master=root, text='Quit', command=_quit).pack(side=tk.BOTTOM)
 
 show_frame()
 root.mainloop()
+
 
