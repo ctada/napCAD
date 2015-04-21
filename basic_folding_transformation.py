@@ -4,10 +4,10 @@ transformed onto this plane, and then the program checks for intersecting sides
 to determine whether or not to fold/unfold the sides."""
 
 import numpy as np
-import math
+import mathfc
 import collections
 
-def transform_side(side,theta,actual_fold_lines,pos):
+def transform_side(side,theta,actual_fold_lines):
 	"""Transform the coordinates of the side onto the perpendicular plane using Euler-Rodrigues formula
 		Input: side coordinates, plane
 		Output: new coordinates
@@ -35,32 +35,32 @@ def transform_side(side,theta,actual_fold_lines,pos):
 		#round points to nearest whole number, add to list of transformed side coordinates
 		folded_vector = round(transform_vector[0]),round(transform_vector[1]),round(transform_vector[2])
 		new_side.append(folded_vector)
-	#replace local coordinate system with image coordinates
-	"""final_side = ()
-	for i,j in enumerate(new_side):
-		if i%2 == :
-			 = actual_fold_lines[pos][0]
-			 = actual_fold_lines[pos][1]"""
 	return new_side
 
-print transform_side(([0,0],[0,6],[6,6],[6,0]),90,([0,18],[6,18]),1)
-
-def further_transform_check(sides,axes,theta,connections):
+def further_transform_check(sides,actual_folds,theta,connections):
 	"""Check if sides intersect, and output whether the angles of the side planes need to be changed or not
 		Input: all side coordinates, plane equation 
 		Output: side coordinates if proper, or neg/pos (for more or less angle) and side coordinates
 	"""
-	temp_sides = list()
+	all_sides = {}
 	count = 0
+	#make list of vectors in each side
+	for i in sides:
+		#add to dictionary with side as key and vectors as values
 
-	"""while count != connections:
-		for i in range(1,len(sides)):
-			if sides[i] == sides[i-1]:
-				count+=1
-			else:
-				print i
-				count+=1"""
-	print count
+
+		for j in range(1,len(i)):
+			new_vector = (i[j][0]-i[j-1][0],i[j][1]-i[j-1][1],i[j][2]-i[j-1][2])
+			#vectors.append(new_vector)
+
+
+
+	"""for x, left in enumerate(vectors):
+		print left
+		for y, right in enumerate(vectors):
+			common = len(set(left) & set(right))
+	        #print left
+	print count"""
 
 def main(sides):
 	"""call things"""
@@ -68,11 +68,11 @@ def main(sides):
 	folded_sides = list()
 	length = len(sides)
 	for i in sides:
-		folded_sides.append(transform_side(i,theta,actual_fold_lines,index[i]))
+		folded_sides.append(transform_side(i,theta,actual_fold_lines))
 	#return folded_sides
-	#return further_transform_check(folded_sides,fold_lines,theta,length)
+	return further_transform_check(folded_sides,actual_fold_lines,theta,length)
 
-#side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[3,0]),([0,0],[0,6],[6,6],[4,0]))
-#actual_fold_lines = ([0,12],[0,18],[0,18],[6,18],[6,18],[6,12],[6,12],[6,6],[0,6])
+side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[3,0]),([0,0],[0,6],[6,6],[4,0]))
+actual_fold_lines = ([0,12],[0,18],[0,18],[6,18],[6,18],[6,12],[6,12],[6,6],[0,6])
 
-#print main(side_coordinates)
+print main(side_coordinates)
