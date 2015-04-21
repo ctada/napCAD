@@ -4,17 +4,17 @@ transformed onto this plane, and then the program checks for intersecting sides
 to determine whether or not to fold/unfold the sides."""
 
 import numpy as np
-import mathfc
+import math
 import collections
 
-def transform_side(side,theta,actual_fold_lines):
+def transform_side(side,theta):
 	"""Transform the coordinates of the side onto the perpendicular plane using Euler-Rodrigues formula
 		Input: side coordinates, plane
 		Output: new coordinates
 	"""
 	new_side = list()
 	#calculating axis of rotation
-	axis = side[3][0]-side[0][0],0,0
+	axis = side[len(side)-1][0]-side[0][0],0,0
 	#converting theta to radians
 	rad = math.radians(theta)
 	for i in side: 
@@ -37,30 +37,47 @@ def transform_side(side,theta,actual_fold_lines):
 		new_side.append(folded_vector)
 	return new_side
 
-def further_transform_check(sides,actual_folds,theta,connections):
+def create_side_dictionaries(sides,theta):
 	"""Check if sides intersect, and output whether the angles of the side planes need to be changed or not
 		Input: all side coordinates, plane equation 
 		Output: side coordinates if proper, or neg/pos (for more or less angle) and side coordinates
 	"""
-	all_sides = {}
+	sides_dict = {}
+	rev_sides_dict = {}
 	count = 0
 	#make list of vectors in each side
 	for i in sides:
-		#add to dictionary with side as key and vectors as values
-
-
+		key = sides.index(i)
 		for j in range(1,len(i)):
 			new_vector = (i[j][0]-i[j-1][0],i[j][1]-i[j-1][1],i[j][2]-i[j-1][2])
-			#vectors.append(new_vector)
+			#add to dictionary with side as key and vectors as values
+			if key in sides_dict:
+				sides_dict[key].append(new_vector)
+			else:
+				sides_dict[key] = [new_vector]
 
+	#create dictionary with vectors as the keys
+	for key, values in sides_dict.items():
+		for value in values:
+			if value in rev_sides_dict:
+				rev_sides_dict[value].append(key)
+			else:
+				rev_sides_dict[value] = [key]
 
-
-	"""for x, left in enumerate(vectors):
-		print left
-		for y, right in enumerate(vectors):
-			common = len(set(left) & set(right))
-	        #print left
-	print count"""
+	#while sides_dict:
+	for key,value in rev_sides_dict.items():
+		if len(value) > 1:
+			for i in value:
+				if i in sides_dict:
+					del sides_dict[i]
+		else:
+			for i in value:
+				if i in sides_dict:
+					theta-=1
+					sides_dict[i] = transform_side(sides_dict[i],theta)
+					print theta
+					print sides_dict[i]
+	return sides_dict
 
 def main(sides):
 	"""call things"""
@@ -68,11 +85,11 @@ def main(sides):
 	folded_sides = list()
 	length = len(sides)
 	for i in sides:
-		folded_sides.append(transform_side(i,theta,actual_fold_lines))
+		folded_sides.append(transform_side(i,theta))
 	#return folded_sides
-	return further_transform_check(folded_sides,actual_fold_lines,theta,length)
+	return create_side_dictionaries(folded_sides,theta)
 
-side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[3,0]),([0,0],[0,6],[6,6],[4,0]))
+side_coordinates = (([0,1],[4,6],[9,6],[3,0]),([0,1],[3,6],[6,4],[6,0]),([0,9],[0,6],[6,6],[6,0]),([0,3],[2,6],[4,6],[4,0]))
 actual_fold_lines = ([0,12],[0,18],[0,18],[6,18],[6,18],[6,12],[6,12],[6,6],[0,6])
 
 print main(side_coordinates)
