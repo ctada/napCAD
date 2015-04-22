@@ -22,6 +22,7 @@ def processImg():
     frame = cv2.flip(frame, 1)
     curFrame = frame
     cv2.imwrite("napSketch.jpg",curFrame)
+
     d= VertexDialog(root)
     root.wait_window(d.top)
     vertNum = d.getNum()
@@ -36,39 +37,65 @@ def processImg():
     stl, fig = stl_test.triangulation(x,y,z)
     
     canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.show()
-    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
     toolbar = NavigationToolbar2TkAgg( canvas, root )
     toolbar.update()
-    canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    #canvas.mpl_connect('key_press_event', on_key_event)
-    lmain.after(0)
+    canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    #canvas._tkcanvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    canvas.mpl_connect('key_press_event', lambda on:key_press_handler(event, canvas, toolbar))
+    canvas.show()
     
-    s = tk.Button(master=root, text='Save As', command=save_as(stl)).pack(side=tk.TOP)
+    saveButton = tk.Button(master=root, text='Save As', command=lambda s:save_as(stl)).pack(side=tk.TOP, expand=1)
     #save_as(stl) #save STL instead of text
-    
     
 def show_frame():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
-    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-    img = Image.fromarray(cv2image)
-    curFrame = cv2image
+    #cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+    #img = Image.fromarray(cv2image)
+
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Convert the grayscale image to binary
+    binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)[1]
+
+    # Detect edges with Canny
+    edged = cv2.Canny(binary, 30, 200)
+
+    # Find the 10 contours within the edged image
+    #_,cnts, _ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    (cnts,_) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
+    rectCnt = None
+    count = 0
+    vertices = []
+    drawn = None
+    for c in cnts:
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+
+        # if contour has four points, classify as rectangle
+        if len(approx) == 4:
+            rectCnt = approx
+            vertices.append(rectCnt)
+            cv2.drawContours(frame, [rectCnt], -1, (0, 255, 0), 1)
+            count += 1
+    # Draw the rectangles over the image
+    #cv2.imshow("Rectangles", image)
+    img = Image.fromarray(frame)
     imgtk = ImageTk.PhotoImage(image=img)
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
     lmain.after(10, show_frame)
 
-def save_as(content):
-   #contents = self.textbox.get(1.0,"end-1c")  # given root frame, stores the contents of the text widget in a str, CHANGE TO STL OUTPUT FROM PROGRAM
+def save_as(self,content):
     f = tkFileDialog.asksaveasfilename(   #this will make the file path a string
         parent= root,
-        defaultextension=".stl",                 #so it's easier to check if it exists
+        defaultextension=".stl",                
         filetypes = (("napCAD STL", "*.stl"),("testText", ".txt")), 
         title="Save STL as...")    #in the save function
     stl_test.stl_write(f,content)
-    #root.quit()
+
 def _quit():
     cap.release()
     cv2.destroyAllWindows()
@@ -79,15 +106,12 @@ def handler():
     if tkMessageBox.askokcancel("Quit?", "Are you sure you want to quit?"):
         root.quit()
 
-#def on_key_event(event):
-#    print('you pressed %s'%event.key)
-#    key_press_handler(event, canvas, toolbar)
 
 class VertexDialog:
     def __init__(self, parent):
         self.inputVertNum = 0
         top = self.top = tk.Toplevel(parent)
-        tk.Label(top, text="Please enter the number of vertices in the geometry.").pack()
+        tk.Label(top, text="Photo Taken! \n Please enter the number of vertices in the geometry.").pack()
         self.e = tk.Entry(top)
         self.e.pack(padx=5)
 

@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 import pprint
-import plotly.plotly as py
-from plotly.graph_objs import *
+# import plotly.plotly as py
+# from plotly.graph_objs import *
 from normalizer import normalize
 
 # Get image
@@ -219,7 +219,7 @@ def make_shape(front,left_side,back,right_side,top,bottom):
 	back_3D = back_plane(back,left_side_3D[0][2])
 	top_3D = top_plane(top,front_3D[2][1])
 	bottom_3D = bottom_plane(bottom,front_3D[0][1])
-
+	'''
 	trace1 = Scatter3d(
 	    x=[int(i[0]) for i in front_3D],
 	    y=[int(j[1]) for j in front_3D],
@@ -267,6 +267,7 @@ def make_shape(front,left_side,back,right_side,top,bottom):
 	)
 	fig = Figure(data=data, layout=layout)
 	plot_url = py.plot(fig, filename='simple-3d-scatter')
+	'''
 
 	return front_3D,left_side_3D,back_3D,right_side_3D,top_3D,bottom_3D
 	
@@ -301,5 +302,5 @@ def example():
 	#convert coordinates
 	print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
 
-if __name__=="main":
+if __name__=="__main__":
 	example()
