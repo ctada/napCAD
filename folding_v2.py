@@ -5,26 +5,70 @@ until they meet, forming a closed 3D shape.
 
 import numpy as np
 import math
-import collections
 
-def move_to_actual_coord(old_side,side_dict,side_num):
+def find_intersection_distances(p1,y1,x1,y2,x2):
+	if y2-y1 == 0:
+		dist = math.fabs(p1[1]-y1)
+	elif x2-x1 == 0:
+		dist = math.fabs(p1[0]-x1)
+	else:
+		axis_line_slope = (y2-y1)/(x2-x1)
+		perp_slope = -1/(axis_line_slope)
+		c1 = axis_line_slope * x1 - y1
+		c2 = perp_slope * p1[0] - p1[1]
+		x_intersect = (c2 - c1)/(perp_slope - axis_line_slope)
+		y_intersect = perp_slope * x_intersect + c2
+		dist = math.sqrt((x_intersect-p1[0])**2+(y_intersect-p1[1])**2)
+	hypotenuse = math.sqrt((x2-p1[0])**2+(y2-p1[1])**2)
+	if hypotenuse == 0:
+		angle = 0.0
+	else:
+		angle = math.asin(dist/hypotenuse)
+	return dist,angle
+
+def move_to_actual_coord(old_side,side_dict,side_num,theta):
 	"""Change the xy coordinates of the sides to the correct values from the original image
 		Input: side coordinates, sides dictionary
 		Output: new side coordinates in the sides dictionary	
 	"""
-	move_side = list()
-	for i in old_side:
-		point_num = old_side.index(i)
-		new_x = side_dict[side_num][1][point_num][0]
-		x_diff = side_dict[side_num][0][point_num][0] - i[0]
-		new_y = side_dict[side_num][1][point_num][1]
-		y_diff = side_dict[side_num][0][point_num][1] - i[1]
-		z = i[2]
-		final_side = new_x-x_diff,new_y-y_diff,z
-		side_dict[side_num].append(final_side)
-	print side_dict
+	final_side = list()
+	y1 = old_side[0][1]
+	x1 = old_side[0][0]
+	y2 = old_side[len(old_side)-1][1]
+	x2 = old_side[len(old_side)-1][0]
+	new_xaxis = side_dict[side_num][1][len(old_side)-1][0]
+	new_xaxis1 = side_dict[side_num][1][0][0]
+	new_yaxis = side_dict[side_num][1][len(old_side)-1][1]
+	new_yaxis1 = side_dict[side_num][1][0][1]
 
-def transform_side(side,theta,xy_coord,side_num):
+	for i,j in enumerate(old_side):
+		x = side_dict[side_num][1][i][0]
+		y = side_dict[side_num][1][i][1]
+		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
+		dist = intersections[0]
+		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
+		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
+		if (new_xaxis>new_xaxis1) and (new_yaxis-new_yaxis1==0):
+			[fin_x,fin_y] = coordinates[1]
+		elif (new_xaxis<new_xaxis1) and (new_yaxis-new_yaxis1==0):
+			[fin_x,fin_y] = coordinates[2]
+		elif (new_yaxis>new_yaxis1) and (new_xaxis-new_xaxis1==0):
+			[fin_x,fin_y] = coordinates[3]
+		else:
+			[fin_x,fin_y] = coordinates[4]
+		"""else:	
+			hyp = intersections[0]/math.sin(intersections[1])"""
+		
+		z = j[2]
+
+		final_coord = fin_x,fin_y,z
+		final_coord = list(final_coord)
+		final_side.append(final_coord)
+	side_dict[side_num] = list(side_dict[side_num])
+	side_dict[side_num].append(final_side)
+	return side_dict
+
+def transform_side(side,theta,side_dict,side_num):
 	"""Transform the coordinates of the side onto the perpendicular plane using Euler-Rodrigues formula
 		Input: side coordinates, plane
 		Output: new coordinates
@@ -53,36 +97,47 @@ def transform_side(side,theta,xy_coord,side_num):
 		folded_vector = round(transform_vector[0]),round(transform_vector[1]),round(transform_vector[2])
 		new_side.append(folded_vector)
 
-	moved_side = move_to_actual_coord(new_side,xy_coord,side_num)
+	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
+
+def check_sides(run,theta):
+	rev_sides_dict = {}
+	for i,j in run.iteritems():
+		j = [tuple(k) for k in j]
+		val = tuple([tuple(m) for m in j[2]])
+		if val in rev_sides_dict.items():
+			rev_sides_dict[val].append(i)
+		else:
+			rev_sides_dict[val] = i
+	return rev_sides_dict
+		
+
 
 def make_dictionaries(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
 	sides_old_coordinates = {}
 	for i in range(0,len(sides)):
-		val = sides[i]
-		sides_old_coordinates[i] = [val]
-		sides_old_coordinates[i].append(xy_coord[i])
-	run_fxn = main(sides_old_coordinates,sides_old_coordinates)
-	#check_sides(run_fxn,sides_old_coordinates,90)
-	#return run_fxn
+		val1 = sides[i]
+		val2 = xy_coord[i]
+		if i not in sides_old_coordinates:
+			sides_old_coordinates[i] = val1,val2
+		else: 
+			pass
 
-def main(sides,xy_coordinates):
+	run_fxn = main(sides_old_coordinates)
+	return check_sides(run_fxn,90)
+	
+
+def main(sides):
 	"""call things"""
 	theta = 90
-	folded_sides = list()
 	length = len(sides)
 	for i in sides:
 		side = sides[i][0]
-		folded_sides.append(transform_side(side,theta,xy_coordinates,i))
-	return folded_sides
+		transformed_side = transform_side(side,theta,sides,i)
+	return transformed_side
 
-#side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
-#actual_coordinates = (([6,6],[6,0],[0,0],[0,6]),([0,6],[-6,6],[-6,12],[0,12]),([0,12],[0,18],[6,18],[6,12]),([6,12],[12,12],[12,6],[6,6]))
-#actual_fold_lines = ([0,12],[0,18],[0,18],[6,18],[6,18],[6,12],[6,12],[6,6],[0,6])
-
-side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
-actual_coordinates = (([0,12],[0,18],[6,18],[6,12]),([0,6],[-6,6],[-6,12],[0,12]))
-actual_fold_lines = ([0,12],[0,18])
+side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
+actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
 print make_dictionaries(side_coordinates,actual_coordinates)
