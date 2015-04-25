@@ -20,7 +20,7 @@
     <header>
       <div class="inner">
         <h1>Napcad</h1>
-        <h2>NapCAD is an openCV-based image to CAD program that translates JPEG images to STL files.</h2>
+        <h2>NapCAD is an openCV-based image to STL converter, designed to model folded forms from a sketch of the geometric net.</h2>
         <a href="https://github.com/ctada/napCAD" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
@@ -29,7 +29,25 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Documentation</h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
+
+<p>Let's get straight to it! To clone the repo and run the program:</p>
+
+<pre><code>$ cd your_repo_root
+$ git clone https://github.com/ctada/napCAD.git
+$ cd napCad
+$ python gui_test.py
+</code></pre>
+
+<p>At this point, the following screen should pop up. Hold up your drawn geometric net to your webcam, and click "Preview 3D Model". From there, you can save the 3D render and STL file, or try a new sketch.</p>
+
+<img src="images/demo_screenshot.png" title="NapCAD Initial Screenshot" alt="NapCAD Cube Screenshot" class="padded"/>
+
+The result will look something like the following. Note that the scale of the 3D render may be skewed; the coordinate values on the axes should still be accurate, however.
+<img src="images/dl_screenshot.png" title="NapCAD Download Screenshot" alt="NapCAD CubeSTL Screenshot" class="padded"/>
+
+<h3>
+<a id="proj-docs" class="anchor" href="#proj-docs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Documentation</h3>
 
 <p>Our project proposal can be found <a href="https://github.com/ctada/napCAD/blob/master/ProjectProposal.pdf" class="user-mention">here</a></p>.
 <p>Our framing document for the design review is <a href="https://docs.google.com/document/d/1sashaslikqVJYPo4Gxy6Q3mdbeaG-jh5iC-lHgOn0o8/edit?usp=sharing" class="user-mention">here</a></p>.
@@ -37,29 +55,10 @@
 <p>Our framing document for the code review is <a href="https://docs.google.com/document/d/14HKfEM_XHwM-tewucDM9E0tyuydTLF2RgIu3GJZcpAQ/edit?usp=sharing">here</a></p>.
 <p>Our reflection document for the code review is <a href="https://docs.google.com/document/d/1Igzj8OKv6TrQI-QBCjdoh1X4b3vYS8eJOj9_NiglUjk/edit?usp=sharing">here</a></p>.
 
-<p>Example Text After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a id="rather-drive-stick" class="anchor" href="#rather-drive-stick" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>This project was created as part of the Software Design course at Olin College, Spring 2015. The team consists of Kathryn Hite (<a href="https://github.com/kghite" class="user-mention">@kghite</a>), Shivali Chandra (<a href="https://github.com/skchandra" class="user-mention">@skchandra</a>), Caleb Kissel (<a href="https://github.com/ckissel" class="user-mention">@ckissel</a>), and Celine Ta (<a href="https://github.com/ctada" class="user-mention">@ctada</a>).</p>
 
 <h3>
 <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
