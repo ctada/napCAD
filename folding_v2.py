@@ -103,6 +103,7 @@ def transform_side(side,theta,side_dict,side_num):
 
 def check_sides(run,theta):
 	vector_sides = {}
+	data = []
 	for i in run: 
 		position = run[i][2]
 		for j in range(1,len(position)):
@@ -116,25 +117,27 @@ def check_sides(run,theta):
 				vector_sides[key] = [i]
 	for k in vector_sides:
 		if len(vector_sides[k])>1:
-			print 'y'
+			data.append(vector_sides[k][0])
+			data.append(vector_sides[k][1])
+	print list(set(run.keys())-set(data))
 	#return vector_sides
 
 
 def make_dictionaries(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
+	theta = 90
 	sides_old_coordinates = {}
 	for i in range(0,len(sides)):
 		val1 = sides[i]
 		val2 = xy_coord[i]
 		if i not in sides_old_coordinates:
 			sides_old_coordinates[i] = val1,val2
-	run_fxn = main(sides_old_coordinates)
-	return check_sides(run_fxn,90)
+	run_fxn = main(sides_old_coordinates,theta)
+	return check_sides(run_fxn,theta)
 	
 
-def main(sides):
+def main(sides,theta):
 	"""call things"""
-	theta = 90
 	length = len(sides)
 	for i in sides:
 		side = sides[i][0]
