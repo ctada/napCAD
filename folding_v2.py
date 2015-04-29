@@ -102,12 +102,11 @@ def transform_side(side_num,side_dict,theta):
 	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
 
-def check_sides(run,temp,theta,fin,count):
+def check_sides(run,temp,theta,fin):
 	vector_sides = temp
 	data = []
 	redo_sides = {}
 	new_run = {}
-	count = count
 	for i in run: 
 		position = run[i][2]
 		for j in range(1,len(position)):
@@ -125,7 +124,7 @@ def check_sides(run,temp,theta,fin,count):
 			data.append(vector_sides[k][1])
 	new_side_list = list(set(run.keys())-set(data))
 	if not new_side_list:
-		return run
+		return 'angle:',theta,'coordinates:',run
 	else:
 		new_t = theta+1
 		for i in run.keys():
@@ -137,10 +136,7 @@ def check_sides(run,temp,theta,fin,count):
 			redone = transform_side(i,redo_sides,new_t)
 		final = redone.copy()
 		final.update(new_run)
-		count+=1
-		print count
-		return check_sides(redone,new_run,new_t,final,count)
-		
+		return check_sides(redone,new_run,new_t,final)
 
 def make_dictionaries(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
@@ -152,7 +148,7 @@ def make_dictionaries(sides,xy_coord):
 		if i not in sides_old_coordinates:
 			sides_old_coordinates[i] = val1,val2
 	run_fxn = main(sides_old_coordinates,theta)
-	return check_sides(run_fxn,{},theta,{},0)
+	return check_sides(run_fxn,{},theta,{})
 	
 
 def main(sides,theta):
