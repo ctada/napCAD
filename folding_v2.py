@@ -5,6 +5,7 @@ until they meet, forming a closed 3D shape.
 
 import numpy as np
 import math
+import collections
 
 def find_intersection_distances(p1,y1,x1,y2,x2):
 	if y2-y1 == 0:
@@ -61,7 +62,7 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		
 		z = j[2]
 
-		final_coord = fin_x,fin_y,z
+		final_coord = fin_x/1.0,fin_y/1.0,z
 		final_coord = list(final_coord)
 		final_side.append(final_coord)
 	side_dict[side_num] = list(side_dict[side_num])
@@ -75,23 +76,23 @@ def transform_side(side,theta,side_dict,side_num):
 	"""
 	new_side = list()
 	#calculating axis of rotation
-	axis = side[len(side)-1][0]-side[0][0],0,0
+	axis = side[len(side)-1][0]-side[0][0],0.0,0.0
 	#converting theta to radians
 	rad = math.radians(theta)
 	for i in side: 
 		#calculating vector for each point in side
-		side_vector = i[0],i[1],0
+		side_vector = i[0],i[1],0.0
 		#Euler-Rodrigues formula to rotate vectors
 		axis = np.asarray(axis)
 		theta = np.asarray(rad)
 		axis = axis/math.sqrt(np.dot(axis, axis))
-		a = math.cos(theta/2)
-		b, c, d = -axis*math.sin(theta/2)
+		a = math.cos(theta/2.0)
+		b, c, d = -axis*math.sin(theta/2.0)
 		aa, bb, cc, dd = a*a, b*b, c*c, d*d
 		bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
-		multiplier = np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
-					[2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
-					[2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
+		multiplier = np.array([[aa+bb-cc-dd, 2.0*(bc+ad), 2.0*(bd-ac)],
+					[2.0*(bc-ad), aa+cc-bb-dd, 2.0*(cd+ab)],
+					[2.0*(bd+ac), 2.0*(cd-ab), aa+dd-bb-cc]])
 		transform_vector = (np.dot(multiplier, side_vector))
 		#round points to nearest whole number, add to list of transformed side coordinates
 		folded_vector = round(transform_vector[0]),round(transform_vector[1]),round(transform_vector[2])
@@ -101,16 +102,22 @@ def transform_side(side,theta,side_dict,side_num):
 	return moved_side
 
 def check_sides(run,theta):
-	rev_sides_dict = {}
-	for i,j in run.iteritems():
-		j = [tuple(k) for k in j]
-		val = tuple([tuple(m) for m in j[2]])
-		if val in rev_sides_dict.items():
-			rev_sides_dict[val].append(i)
-		else:
-			rev_sides_dict[val] = i
-	return rev_sides_dict
-		
+	vector_sides = {}
+	for i in run: 
+		position = run[i][2]
+		for j in range(1,len(position)):
+			if (position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1]) or (position[j][2]>position[j-1][2]):
+				key = str(position[j])+str(position[j-1])
+			else:
+				key = str(position[j-1])+str(position[j])
+			if key in vector_sides:
+				vector_sides[key].append(i)
+			else: 
+				vector_sides[key] = [i]
+	for k in vector_sides:
+		if len(vector_sides[k])>1:
+			print 'y'
+	#return vector_sides
 
 
 def make_dictionaries(sides,xy_coord):
@@ -121,9 +128,6 @@ def make_dictionaries(sides,xy_coord):
 		val2 = xy_coord[i]
 		if i not in sides_old_coordinates:
 			sides_old_coordinates[i] = val1,val2
-		else: 
-			pass
-
 	run_fxn = main(sides_old_coordinates)
 	return check_sides(run_fxn,90)
 	
