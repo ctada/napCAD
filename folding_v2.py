@@ -6,6 +6,7 @@ until they meet, forming a closed 3D shape.
 import numpy as np
 import math
 import collections
+from scipy import ndimage
 
 def find_intersection_distances(p1,y1,x1,y2,x2):
 	if y2-y1 == 0:
@@ -57,8 +58,9 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 			[fin_x,fin_y] = coordinates[3]
 		else:
 			[fin_x,fin_y] = coordinates[4]
-		"""else:	
-			hyp = intersections[0]/math.sin(intersections[1])"""
+		#else:	
+			#hyp = intersections[0]/math.sin(intersections[1])
+		#	print intersections
 		
 		z = j[2]
 
@@ -102,6 +104,20 @@ def transform_side(side_num,side_dict,theta):
 	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
 
+def output(theta,final_list):
+	x = list()
+	y = list()
+	z = list()
+	final_coordinates = []
+	for i in final_list:
+		final_coordinates.append(final_list[i][2]) 
+	for i in final_coordinates:
+		for j in i: 
+			x.append(j[0])
+			y.append(j[1])
+			z.append(j[2])
+	return x,y,z
+
 def check_sides(run,temp,theta,fin):
 	vector_sides = temp
 	data = []
@@ -124,7 +140,7 @@ def check_sides(run,temp,theta,fin):
 			data.append(vector_sides[k][1])
 	new_side_list = list(set(run.keys())-set(data))
 	if not new_side_list:
-		return 'angle:',theta,'coordinates:',run
+		return output(theta,run)
 	else:
 		new_t = theta+1
 		for i in run.keys():
@@ -159,7 +175,21 @@ def main(sides,theta):
 		transformed_side = transform_side(i,sides,theta)
 	return transformed_side
 
+
 side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
 actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
 print make_dictionaries(side_coordinates,actual_coordinates)
+
+"""PYRAMID
+side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
+actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,0]))
+
+print make_dictionaries(side_coordinates,actual_coordinates)"""
+
+"""TRIANGULAR PRISM
+side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
+actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
+
+print make_dictionaries(side_coordinates,actual_coordinates)"""
+
