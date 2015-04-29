@@ -69,11 +69,12 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 	side_dict[side_num].append(final_side)
 	return side_dict
 
-def transform_side(side,theta,side_dict,side_num):
+def transform_side(side_num,side_dict,theta):
 	"""Transform the coordinates of the side onto the perpendicular plane using Euler-Rodrigues formula
 		Input: side coordinates, plane
 		Output: new coordinates
 	"""
+	side = side_dict[side_num][0]
 	new_side = list()
 	#calculating axis of rotation
 	axis = side[len(side)-1][0]-side[0][0],0.0,0.0
@@ -101,9 +102,12 @@ def transform_side(side,theta,side_dict,side_num):
 	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
 
-def check_sides(run,theta):
-	vector_sides = {}
+def check_sides(run,temp,theta,fin,count):
+	vector_sides = temp
 	data = []
+	redo_sides = {}
+	new_run = {}
+	count = count
 	for i in run: 
 		position = run[i][2]
 		for j in range(1,len(position)):
@@ -119,13 +123,28 @@ def check_sides(run,theta):
 		if len(vector_sides[k])>1:
 			data.append(vector_sides[k][0])
 			data.append(vector_sides[k][1])
-	print list(set(run.keys())-set(data))
-	#return vector_sides
-
+	new_side_list = list(set(run.keys())-set(data))
+	if not new_side_list:
+		return run
+	else:
+		new_t = theta+1
+		for i in run.keys():
+			if i in new_side_list:
+				redo_sides[i] = [run[i][0]]
+				redo_sides[i].append(run[i][1])
+			else:
+				new_run[i] = run[i]
+			redone = transform_side(i,redo_sides,new_t)
+		final = redone.copy()
+		final.update(new_run)
+		count+=1
+		print count
+		return check_sides(redone,new_run,new_t,final,count)
+		
 
 def make_dictionaries(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
-	theta = 90
+	theta = 0
 	sides_old_coordinates = {}
 	for i in range(0,len(sides)):
 		val1 = sides[i]
@@ -133,7 +152,7 @@ def make_dictionaries(sides,xy_coord):
 		if i not in sides_old_coordinates:
 			sides_old_coordinates[i] = val1,val2
 	run_fxn = main(sides_old_coordinates,theta)
-	return check_sides(run_fxn,theta)
+	return check_sides(run_fxn,{},theta,{},0)
 	
 
 def main(sides,theta):
@@ -141,7 +160,7 @@ def main(sides,theta):
 	length = len(sides)
 	for i in sides:
 		side = sides[i][0]
-		transformed_side = transform_side(side,theta,sides,i)
+		transformed_side = transform_side(i,sides,theta)
 	return transformed_side
 
 side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
