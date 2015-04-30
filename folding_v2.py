@@ -51,13 +51,13 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
 		if (new_xaxis>new_xaxis1) and (new_yaxis-new_yaxis1==0):
-			[fin_x,fin_y] = coordinates[2]
-		elif (new_xaxis<new_xaxis1) and (new_yaxis-new_yaxis1==0):
 			[fin_x,fin_y] = coordinates[1]
+		elif (new_xaxis<new_xaxis1) and (new_yaxis-new_yaxis1==0):
+			[fin_x,fin_y] = coordinates[2]
 		elif (new_yaxis>new_yaxis1) and (new_xaxis-new_xaxis1==0):
-			[fin_x,fin_y] = coordinates[4]
-		else:
 			[fin_x,fin_y] = coordinates[3]
+		else:
+			[fin_x,fin_y] = coordinates[4]
 		#else:	
 			#hyp = intersections[0]/math.sin(intersections[1])
 		#	print intersections
@@ -154,8 +154,8 @@ def check_sides(run,temp,theta,fin):
 			redone = transform_side(i,redo_sides,new_t)
 		final = redone.copy()
 		final.update(new_run)
-		for i in final:
-			print final[i][2],theta,i
+		"""for i in final:
+			print final[i][2],theta,i"""
 		return check_sides(redone,new_run,new_t,final)
 		
 
@@ -169,7 +169,7 @@ def side_transform(sides,theta):
 
 def main(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
-	theta = 110
+	theta = 0
 	sides_old_coordinates = {}
 	for i in range(0,len(sides)):
 		val1 = sides[i]
