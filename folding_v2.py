@@ -51,13 +51,13 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
 		if (new_xaxis>new_xaxis1) and (new_yaxis-new_yaxis1==0):
-			[fin_x,fin_y] = coordinates[1]
-		elif (new_xaxis<new_xaxis1) and (new_yaxis-new_yaxis1==0):
 			[fin_x,fin_y] = coordinates[2]
+		elif (new_xaxis<new_xaxis1) and (new_yaxis-new_yaxis1==0):
+			[fin_x,fin_y] = coordinates[1]
 		elif (new_yaxis>new_yaxis1) and (new_xaxis-new_xaxis1==0):
-			[fin_x,fin_y] = coordinates[3]
-		else:
 			[fin_x,fin_y] = coordinates[4]
+		else:
+			[fin_x,fin_y] = coordinates[3]
 		#else:	
 			#hyp = intersections[0]/math.sin(intersections[1])
 		#	print intersections
@@ -100,7 +100,6 @@ def transform_side(side_num,side_dict,theta):
 		#round points to nearest whole number, add to list of transformed side coordinates
 		folded_vector = round(transform_vector[0]),round(transform_vector[1]),round(transform_vector[2])
 		new_side.append(folded_vector)
-
 	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
 
@@ -155,8 +154,10 @@ def check_sides(run,temp,theta,fin):
 			redone = transform_side(i,redo_sides,new_t)
 		final = redone.copy()
 		final.update(new_run)
-		return final
-		#return check_sides(redone,new_run,new_t,final)
+		for i in final:
+			print final[i][2],theta,i
+		return check_sides(redone,new_run,new_t,final)
+		
 
 def side_transform(sides,theta):
 	"""call things"""
@@ -168,7 +169,7 @@ def side_transform(sides,theta):
 
 def main(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
-	theta = 120
+	theta = 110
 	sides_old_coordinates = {}
 	for i in range(0,len(sides)):
 		val1 = sides[i]
@@ -182,11 +183,11 @@ def main(sides,xy_coord):
 
 
 
-"""CUBE
+"""CUBE"""
 side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
 actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
-print make_dictionaries(side_coordinates,actual_coordinates)"""
+print main(side_coordinates,actual_coordinates)
 
 """PYRAMID
 side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
@@ -194,9 +195,9 @@ actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,
 
 print make_dictionaries(side_coordinates,actual_coordinates)"""
 
-"""TRIANGULAR PRISM"""
-side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
+"""TRIANGULAR PRISM
+side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
 actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
 
-print main(side_coordinates,actual_coordinates)
+print main(side_coordinates,actual_coordinates)"""
 
