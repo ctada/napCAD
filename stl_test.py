@@ -51,4 +51,4 @@ if __name__ == "__main__":
 		z = [0,0,1,0,0]
 
 	vert = triangulation(x,y,z)
-	stl_write(filename, vert[0])
+	#stl_write(filename, vert[0])

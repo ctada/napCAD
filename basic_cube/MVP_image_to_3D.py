@@ -302,5 +302,5 @@ def example():
 	#convert coordinates
 	print output_xyz(perfect_side,perfect_side,perfect_side,perfect_side,perfect_side,perfect_side)
 
-if __name__=="__main__":
-	example()
+#if __name__=="__main__":
+#	example()
