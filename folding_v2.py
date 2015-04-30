@@ -127,9 +127,12 @@ def check_sides(run,temp,theta,fin):
 		position = run[i][2]
 		for j in range(1,len(position)):
 			if (position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1]) or (position[j][2]>position[j-1][2]):
-				key = str(position[j])+str(position[j-1])
+				#key = str(position[j])+str(position[j-1])
+				list_key = (tuple(position[j]),tuple(position[j-1]))
 			else:
-				key = str(position[j-1])+str(position[j])
+				#key = str(position[j-1])+str(position[j])
+				list_key = (tuple(position[j-1]),tuple(position[j]))
+			key = list_key
 			if key in vector_sides:
 				vector_sides[key].append(i)
 			else: 
@@ -152,22 +155,10 @@ def check_sides(run,temp,theta,fin):
 			redone = transform_side(i,redo_sides,new_t)
 		final = redone.copy()
 		final.update(new_run)
-		return check_sides(redone,new_run,new_t,final)
+		return final
+		#return check_sides(redone,new_run,new_t,final)
 
-def make_dictionaries(sides,xy_coord):
-	#create dictionary of sides as keys, both sets of xy coordinates as values
-	theta = 0
-	sides_old_coordinates = {}
-	for i in range(0,len(sides)):
-		val1 = sides[i]
-		val2 = xy_coord[i]
-		if i not in sides_old_coordinates:
-			sides_old_coordinates[i] = val1,val2
-	run_fxn = main(sides_old_coordinates,theta)
-	return check_sides(run_fxn,{},theta,{})
-	
-
-def main(sides,theta):
+def side_transform(sides,theta):
 	"""call things"""
 	length = len(sides)
 	for i in sides:
@@ -175,11 +166,27 @@ def main(sides,theta):
 		transformed_side = transform_side(i,sides,theta)
 	return transformed_side
 
+def main(sides,xy_coord):
+	#create dictionary of sides as keys, both sets of xy coordinates as values
+	theta = 120
+	sides_old_coordinates = {}
+	for i in range(0,len(sides)):
+		val1 = sides[i]
+		val2 = xy_coord[i]
+		if i not in sides_old_coordinates:
+			sides_old_coordinates[i] = val1,val2
+	run_fxn = side_transform(sides_old_coordinates,theta)
+	return check_sides(run_fxn,{},theta,{})
+	
 
+
+
+
+"""CUBE
 side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
 actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
-print make_dictionaries(side_coordinates,actual_coordinates)
+print make_dictionaries(side_coordinates,actual_coordinates)"""
 
 """PYRAMID
 side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
@@ -187,9 +194,9 @@ actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,
 
 print make_dictionaries(side_coordinates,actual_coordinates)"""
 
-"""TRIANGULAR PRISM
+"""TRIANGULAR PRISM"""
 side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
 actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
 
-print make_dictionaries(side_coordinates,actual_coordinates)"""
+print main(side_coordinates,actual_coordinates)
 
