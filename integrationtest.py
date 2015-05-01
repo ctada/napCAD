@@ -12,4 +12,6 @@ def napCAD_main():
 
 	faces=face_finder(testshapeSquare,foldlinesSquare)
 	shape3D=make_dictionaries(faces[0],faces[1])
+	print 'napCAD_main just ran!'
 	return shape3D
+
