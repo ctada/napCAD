@@ -6,7 +6,6 @@ until they meet, forming a closed 3D shape.
 import numpy as np
 import math
 import collections
-from scipy import ndimage
 
 def find_intersection_distances(p1,y1,x1,y2,x2):
 	if y2-y1 == 0:
@@ -203,10 +202,10 @@ if __name__ == "__main__":
 	actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,0]))
 	print main(side_coordinates,actual_coordinates)"""
 
-	"""SQUARE PYRAMID WORKS"""
+	"""SQUARE PYRAMID WORKS
 	side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
 	actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
-	print main(side_coordinates,actual_coordinates)
+	print main(side_coordinates,actual_coordinates)"""
 
 	"""TRIANGULAR PRISM WIP
 	side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[3,6],[6,0]))
