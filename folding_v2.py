@@ -51,13 +51,26 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
 		if (new_xaxis>new_xaxis1) and (new_yaxis-new_yaxis1==0):
-			[fin_x,fin_y] = coordinates[1]
+			if math.degrees(theta) <= 90:
+				[fin_x,fin_y] = coordinates[1]
+			else:
+				[fin_x,fin_y] = coordinates[2]
 		elif (new_xaxis<new_xaxis1) and (new_yaxis-new_yaxis1==0):
-			[fin_x,fin_y] = coordinates[2]
+			if math.degrees(theta) <= 90: 
+				[fin_x,fin_y] = coordinates[2]
+			else:
+				[fin_x,fin_y] = coordinates[1]
 		elif (new_yaxis>new_yaxis1) and (new_xaxis-new_xaxis1==0):
-			[fin_x,fin_y] = coordinates[3]
+			if math.degrees(theta) <= 90:
+				[fin_x,fin_y] = coordinates[3]
+			else:
+				[fin_x,fin_y] = coordinates[4]
 		else:
-			[fin_x,fin_y] = coordinates[4]
+			if math.degrees(theta) <=90:
+				[fin_x,fin_y] = coordinates[4]
+			else:
+				[fin_x,fin_y] = coordinates[3]
+
 		#else:	
 			#hyp = intersections[0]/math.sin(intersections[1])
 		#	print intersections
@@ -100,6 +113,7 @@ def transform_side(side_num,side_dict,theta):
 		#round points to nearest whole number, add to list of transformed side coordinates
 		folded_vector = round(transform_vector[0]),round(transform_vector[1]),round(transform_vector[2])
 		new_side.append(folded_vector)
+
 	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
 
@@ -115,7 +129,7 @@ def output(theta,final_list):
 			x.append(j[0])
 			y.append(j[1])
 			z.append(j[2])
-	return x,y,z
+	return theta,x,y,z
 
 def check_sides(run,temp,theta,fin):
 	vector_sides = temp
@@ -125,22 +139,24 @@ def check_sides(run,temp,theta,fin):
 	for i in run: 
 		position = run[i][2]
 		for j in range(1,len(position)):
-			if (position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1]) or (position[j][2]>position[j-1][2]):
-				#key = str(position[j])+str(position[j-1])
-				list_key = (tuple(position[j]),tuple(position[j-1]))
+			if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])) and (position[j][2]>position[j-1][2]):
+				key = str(position[j])+str(position[j-1])
+			elif ((position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1])):
+				key = str(position[j])+str(position[j-1])
 			else:
-				#key = str(position[j-1])+str(position[j])
-				list_key = (tuple(position[j-1]),tuple(position[j]))
-			key = list_key
+				key = str(position[j-1])+str(position[j])
 			if key in vector_sides:
 				vector_sides[key].append(i)
 			else: 
 				vector_sides[key] = [i]
+	print vector_sides
 	for k in vector_sides:
 		if len(vector_sides[k])>1:
 			data.append(vector_sides[k][0])
 			data.append(vector_sides[k][1])
+			print data,theta
 	new_side_list = list(set(run.keys())-set(data))
+	print new_side_list
 	if not new_side_list:
 		return output(theta,run)
 	else:
@@ -154,20 +170,11 @@ def check_sides(run,temp,theta,fin):
 			redone = transform_side(i,redo_sides,new_t)
 		final = redone.copy()
 		final.update(new_run)
-		"""for i in final:
-			print final[i][2],theta,i"""
+		for i in final:
+			print final[i][2]
 		return check_sides(redone,new_run,new_t,final)
-		
 
-def side_transform(sides,theta):
-	"""call things"""
-	length = len(sides)
-	for i in sides:
-		side = sides[i][0]
-		transformed_side = transform_side(i,sides,theta)
-	return transformed_side
-
-def main(sides,xy_coord):
+def make_dictionaries(sides,xy_coord):
 	#create dictionary of sides as keys, both sets of xy coordinates as values
 	theta = 0
 	sides_old_coordinates = {}
@@ -176,28 +183,31 @@ def main(sides,xy_coord):
 		val2 = xy_coord[i]
 		if i not in sides_old_coordinates:
 			sides_old_coordinates[i] = val1,val2
-	run_fxn = side_transform(sides_old_coordinates,theta)
+	run_fxn = main(sides_old_coordinates,theta)
 	return check_sides(run_fxn,{},theta,{})
 	
 
+def main(sides,theta):
+	"""call things"""
+	length = len(sides)
+	for i in sides:
+		side = sides[i][0]
+		transformed_side = transform_side(i,sides,theta)
+	return transformed_side
 
 
-
-"""CUBE"""
+"""CUBE
 side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
 actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
-print main(side_coordinates,actual_coordinates)
+print make_dictionaries(side_coordinates,actual_coordinates)"""
 
 """PYRAMID
 side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
 actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,0]))
-
 print make_dictionaries(side_coordinates,actual_coordinates)"""
 
-"""TRIANGULAR PRISM
+"""TRIANGULAR PRISM"""
 side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
 actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
-
-print main(side_coordinates,actual_coordinates)"""
-
+print make_dictionaries(side_coordinates,actual_coordinates)
