@@ -129,7 +129,7 @@ def output(theta,final_list):
 			x.append(j[0])
 			y.append(j[1])
 			z.append(j[2])
-	return theta,x,y,z
+	return x,y,z
 
 def check_sides(run,temp,theta,fin):
 	vector_sides = temp
