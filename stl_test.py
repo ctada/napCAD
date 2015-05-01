@@ -13,12 +13,6 @@ def triangulation(x, y, z):
 	tri = ConvexHull(points, qhull_options='QJ Pp')
 	# p= points[tri.vertices] or #p= points[tri.convex_hull] to access points, note: tri.simplices = tri.vertices
 
-	return points[tri.simplices]
-
-def tri_vis(x,y,z)	:
-	points = np.array([x, y]).T
-	tri = ConvexHull(points, qhull_options='QJ Pp')
-	
 	# FOR VISUALIZATION PURPOSES
 	# to plot 3D representation, take out the z in the np array above
 	fig = plt.figure()
@@ -33,7 +27,7 @@ def tri_vis(x,y,z)	:
 
 	#plt.show()
 
-	return fig
+	return points[tri.simplices], tri.simplices
 
 def stl_write(file_name, cube_vertices): 
     with open(file_name, 'wb') as fp:
@@ -56,5 +50,4 @@ if __name__ == "__main__":
 		z = [0,0,1,0,0]
 
 	vert = triangulation(x,y,z)
-	tri_vis(x,y,z)
-	stl_write(filename, vert)
+	#stl_write(filename, vert[0])
