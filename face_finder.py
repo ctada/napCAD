@@ -30,36 +30,7 @@ def rotatePolygon(polygon,theta):
 def face_finder(maincontour, foldlines):
 	#takes in a list of points of the main contour, and a list of point pairs giving fold lines
 
-	# startpoint=0 #this gives the most recent point before jumping across a fold line
-
-	# faces=[]
-
-	# while startpoint+1 < len(maincontour): #if the index of the next point to check is giving the original start point, stop
-	# 	face=[maincontour[startpoint]
-
-	# 	nextpoint=startpoint+1 #initialize next point to check
-	# 	while maincontour[nextpoint] is not maincontour[startpoint]: #stop when a full loop is made
-	# 		face.append(maincontour[nextpoint])
-
-	# 		#If this point is on a fold line, skip ahead to the other side of the fold line
-	# 		onFoldline=False
-	# 		for line in enumerate(foldlines):
-	# 			if maincontour[nextpoint] in line[1] and line[1][line[1].index(maincontour[nextpoint])-1] < nextpoint
-	# 				onFoldline=line[0]
-
-	# 		if onFoldline==False:
-	# 			nextpoint=nextpoint+1
-
-	# 		else:
-	# 			line=foldlines[onFoldLine]
-	# 			jumpPoint=line[line.index(maincontour[nextpoint])-1] #jump across a foldline, but only to a smaller index
-	# 			nextStartPoint=nextpoint+1
-	# 			if jumpPoint==maincontour[starpoint]:
-	# 				nextpoint=startpoint 							#so that we don't accidentally skip over the startpoint
-	# 			else nextpoint=maincontour.index(jumpPoint)+1		#so that we don't jump back and forth over and over
-	# 			face.append(jumpPoint)
-
-
+	#dictionary of links, both contour and folded
 	connectionDict={}
 	for point in enumerate(maincontour):
 		index=point[0]
@@ -69,13 +40,14 @@ def face_finder(maincontour, foldlines):
 				connections.insert(0,tuple(line[line.index(point[1])-1]))
 		connectionDict[point[1]]=connections
 
+	#collect a list of all faces (with duplicates)
 	faceLists=[]
 	for point in maincontour:
-		face=(breadth_first(point, connectionDict)[:-1])
+		face=(breadth_first(point, connectionDict)[:-1]) #for some reason breadth first seach includes the startpoint twice. Easiest fix!
 		faceLists.append(face)
 
 
-
+	#uses set notation to drop extras
 	culledFaceLists=[]
 	faceSets=[]
 	for face in faceLists:
@@ -85,6 +57,8 @@ def face_finder(maincontour, foldlines):
 
 	rotatedFaceLists=[]
 
+
+	#count fold lines to see if it's a base or not
 	for face in culledFaceLists:
 		totalfoldlines=0
 		for point in enumerate(face):
@@ -93,7 +67,13 @@ def face_finder(maincontour, foldlines):
 			point1=face[index-1]
 			if [point1,point2] in foldlines:
 				totalfoldlines+=1
-				
+
+		#If it's a base, FOR NOW just remove it
+		if totalfoldlines>=2:
+			culledFaceLists.pop(culledFaceLists.index(face))
+
+
+		#If it's a regular side
 		if totalfoldlines == 1:
 			for point in enumerate(face):
 				point2=point[1]
@@ -109,7 +89,6 @@ def face_finder(maincontour, foldlines):
 					newpoint=[point[0]-xfactor,point[1]-yfactor]
 					newface.append(newpoint)
 				rotatedFace=rotatePolygon(newface,angle)
-
 
 		uprightFace=[]
 
@@ -134,41 +113,32 @@ def face_finder(maincontour, foldlines):
 			for coord in enumerate(newpoint):
 				if coord[1] < 1e-5 and coord > -1e-5:
 					newpoint[coord[0]]=0
-			uprightFace.append([newpoint])
+			uprightFace.append(newpoint)
 		rotatedFaceLists.append(uprightFace)
-	return rotatedFaceLists
+	# print culledFaceLists[1]
+	# print rotatedFaceLists[1]
+
+	#Format lists as tuples of tuples of lists
+	a=[]
+	for face in rotatedFaceLists:
+		a.append(tuple(face))
+	FormattedNormalizedSides=tuple(a)
+
+	b=[]
+	for face in culledFaceLists:
+		newlist=[]
+		for point in face:
+			newpoint=list(point)
+			newlist.append(newpoint)
+		b.append(tuple(newlist))
+	FormattedOriginalSides=tuple(b)
+
+	return [FormattedNormalizedSides,FormattedOriginalSides]
 
 
-	# 		for value in enumerate(newpoint):
-	# 			if value[1] < 1e-5:
-	# 				newpoint[value[0]]=0
-	# 		flippedFace.append(newpoint)
-	# 	rotatedFaceLists.append(flippedFace)
-	# return rotatedFaceLists
 
 
 
-
-
-# def depth_first(pointlist,connectionDict):
-# 	lastpoint=pointlist[-1]
-# 	loops=[]
-# 	for connection in connectionDict[tuple(lastpoint)]:
-
-# 		if connection == pointlist[0] and len(pointlist) != 2:
-# 			loops.append(pointlist)
-			
-# 		if connection not in pointlist:
-# 			loops.append(depth_first(pointlist+[connection],connectionDict))
-# 	lengths=[None]
-# 	print 'loops'
-# 	print loops
-# 	for loop in enumerate(loops):
-# 		lengths.append(len(loops[loop[0]]))
-# 	if lengths != []:
-# 		return loops[lengths.index(min(lengths))]
-# 	if lengths == []:
-# 		return []
 
 def breadth_first(startPoint, connectionDict): #Modified from http://stackoverflow.com/questions/8922060/breadth-first-search-trace-path
 
