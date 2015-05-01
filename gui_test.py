@@ -11,6 +11,7 @@ import stl_test
 from basic_cube import MVP_image_to_3D as mvp
 import folding_v2 as fold
 import matplotlib, sys
+import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
@@ -20,6 +21,10 @@ from matplotlib.figure import Figure
 
 
 def processImg():
+    width, height = 300, 200
+    cap.set(3, width) #3 references cv2.CV_CAP_PROP_FRAME_WIDTH, from http://stackoverflow.com/questions/11420748/setting-camera-parameters-in-opencv-python
+    cap.set(4, height) #4 references cv2.CV_CAP_PROP_FRAME_HEIGHT
+
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
     curFrame = frame
@@ -40,24 +45,26 @@ def processImg():
 
     side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
     actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
-    x, y, z= fold.make_dictionaries(side_coordinates,actual_coordinates)
+    x, y, z= fold.main(side_coordinates,actual_coordinates)
 
     #x,y,z = mvp.output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
    
     #triangulate
-    stl, fig = stl_test.triangulation(x,y,z)
-    #fig_base = figure()
-
+    stl, triangles = stl_test.triangulation(x,y,z)
+    fig = plt.figure()
     #based off of http://matplotlib.org/examples/user_interfaces/embedding_in_tk.html
     canvas = FigureCanvasTkAgg(fig, master=root)
+    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    ax.plot_trisurf(x, y, z, triangles=triangles, cmap=plt.cm.Spectral) #tri.simplices references the faces of the triangles
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    canvas._tkcanvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    canvas.mpl_connect('key_press_event', key_press_handler)
     toolbar = NavigationToolbar2TkAgg( canvas, root )
     toolbar.update()
-    canvas.mpl_connect('key_press_event', key_press_handler)
+
     canvas.show()
     
-    saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(stl)).pack(side=tk.BOTTOM, expand=1)
+    saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(stl)).pack(side=tk.TOP, expand=1)
     
 def show_frame():
     _, frame = cap.read()
@@ -133,8 +140,11 @@ class VertexDialog:
     def getNum(self):
         return self.inputVertNum
 
-width, height = 800, 600
+#width, height = 300, 200
+#width, height = 500, 500
 cap = cv2.VideoCapture(0)
+#cap.set(3, width) #3 references cv2.CV_CAP_PROP_FRAME_WIDTH, from http://stackoverflow.com/questions/11420748/setting-camera-parameters-in-opencv-python
+#cap.set(4, height) #4 references cv2.CV_CAP_PROP_FRAME_HEIGHT
 
 if not cap.isOpened(): 
     cap.open()
