@@ -27,8 +27,7 @@ def triangulation(x, y, z):
 
 	#plt.show()
 
-	return points[tri.simplices], fig
-
+	return points[tri.simplices], tri.simplices
 
 def stl_write(file_name, cube_vertices): 
     with open(file_name, 'wb') as fp:
