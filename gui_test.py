@@ -7,8 +7,8 @@ import tkFileDialog, Tkconstants, tkMessageBox
 import cv2
 import numpy as np
 from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install python-imaging-tk
-#import stl_test
-#from basic_cube import MVP_image_to_3D as mvp
+import stl_test
+from basic_cube import MVP_image_to_3D as mvp
 import integrationtest as it
 import folding_v2 as fold
 import integrationtest as it
@@ -47,8 +47,8 @@ def processImg():
 
     side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
     actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
-    x, y, z= fold.make_dictionaries(side_coordinates,actual_coordinates)
-    #x,y,z= it.napCAD_main()
+    #x, y, z= fold.make_dictionaries(side_coordinates,actual_coordinates)
+    x,y,z= it.napCAD_main()
     #print 'integration test done'
     #root.quit()
     #x,y,z = mvp.output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
@@ -58,10 +58,10 @@ def processImg():
     fig = plt.figure()
     #based off of http://matplotlib.org/examples/user_interfaces/embedding_in_tk.html
     canvas = FigureCanvasTkAgg(fig, master=root)
-    yScrollbar = Scrollbar(root)
-    yScrollbar.grid(row=0, column=1, sticky=Tkconstants.NS)
-    canvas.config(yscrollcommand=yScrollbar.set)
-    yScrollbar.config(command=canvas.yview)
+    #yScrollbar = Scrollbar(root)
+    #yScrollbar.grid(row=0, column=1, sticky=Tkconstants.NS)
+    #canvas.config(yscrollcommand=yScrollbar.set)
+    #yScrollbar.config(command=canvas.yview)
 
 
     ax = fig.add_subplot(1, 1, 1, projection='3d')
@@ -71,7 +71,7 @@ def processImg():
     canvas.mpl_connect('key_press_event', key_press_handler)
     toolbar = NavigationToolbar2TkAgg( canvas, root )
     toolbar.update()
-    scrollbar.config(command=canvas.get_tk_widget().yview)
+    #scrollbar.config(command=canvas.get_tk_widget().yview)
     canvas.show()
     
     saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(stl)).pack(side=tk.TOP, expand=1)
