@@ -79,7 +79,8 @@ $ sudo apt-get install python-imaging-tk
 <pre><code>
 sudo apt-get build-dep python-matplotlib
 </code></pre>
-2. If an error for OpenCV is received when the code is run (“ValueError: too many values to unpack”), change the beginning of line 83 in gui_test.py from “(cnts,_) ” to “_,cnts, _” and the code will run. We believe this is an issue with OpenCV versions, but we're still working on confirming that hypothesis. 
+2. The following error may show up when running code that contains OpenCV:
+<pre><code>ValueError: too many values to unpack</pre></code> If this happens, change the beginning of line 90 in napCAD.py from “(cnts,_) ” to “_,cnts, _” and the code will run. We believe this is an issue with OpenCV versions, but we're still working on confirming that hypothesis. 
 </p>
 
 
