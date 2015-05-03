@@ -31,7 +31,7 @@
           <h3>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
 
-<p>Let's get straight to it! To clone the repo and run the program:</p>
+<p>Let's get straight to it! Make sure you have the <a href="proj-libs" >right</a> libraries installed. Then, clone the repo and run the program:</p>
 
 <pre><code>$ cd your_repo_root
 $ git clone https://github.com/ctada/napCAD.git
@@ -67,6 +67,21 @@ $ python gui_test.py
     <li>Matplotlib</li>
   </ul>
 </p>
+<p>To install these libraries, enter the following into command line. NOTE: This assumes a Debian/ Ubuntu operating system.</p>
+<pre><code>
+$ sudo apt-get install python-numpy python-scipy python-matplotlib 
+$ sudo pip install Pillow
+$ sudo apt-get install python-imaging-tk
+</code></pre>
+
+<p>A couple things in case you run into issues: 
+1. If you need to install dependencies for the above libraries (in this example, python-matplotlib), try
+<pre><code>
+sudo apt-get build-dep python-matplotlib
+</code></pre>
+2. If an error for OpenCV is received when the code is run (“ValueError: too many values to unpack”), change the beginning of line 83 in gui_test.py from “(cnts,_) ” to “_,cnts, _” and the code will run. We believe this is an issue with OpenCV versions, but we're still working on confirming that hypothesis. 
+</p>
+
 
 <h3>
 <a id="proj-docs" class="anchor" href="#proj-docs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Documentation</h3>
