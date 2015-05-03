@@ -9,11 +9,13 @@ import math
 import collections
 
 def find_intersection_distances(p1,y1,x1,y2,x2):
+	#checks if axis is horizontal or vertical
 	if y2-y1 == 0:
 		dist = math.fabs(p1[1]-y1)
 	elif x2-x1 == 0:
 		dist = math.fabs(p1[0]-x1)
 	else:
+		#not used as of now, calculating new distance based off of diagonal axis
 		axis_line_slope = (y2-y1)/(x2-x1)
 		perp_slope = -1/(axis_line_slope)
 		c1 = axis_line_slope * x1 - y1
@@ -34,15 +36,19 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		Output: new side coordinates in the sides dictionary	
 	"""
 	final_side = list()
+	#y1,x1,y2,x2 are coordinates of axis normalized to zero
 	y1 = old_side[0][1]
 	x1 = old_side[0][0]
 	y2 = old_side[len(old_side)-1][1]
 	x2 = old_side[len(old_side)-1][0]
+
+	#variables are coordinates of actual axis
 	new_xaxis = side_dict[side_num][1][len(old_side)-1][0]
 	new_xaxis1 = side_dict[side_num][1][0][0]
 	new_yaxis = side_dict[side_num][1][len(old_side)-1][1]
 	new_yaxis1 = side_dict[side_num][1][0][1]
 
+	#iterate through each point of a side
 	for i,j in enumerate(old_side):
 		x = side_dict[side_num][1][i][0]
 		y = side_dict[side_num][1][i][1]
@@ -50,6 +56,7 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		dist = intersections[0]
 		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
+		#check which direction the fold needs to be (inwards or outwards) depending on axis orientation
 		if (new_xaxis>new_xaxis1) and (new_yaxis-new_yaxis1==0):
 			if math.degrees(theta) <= 90:
 				[fin_x,fin_y] = coordinates[1]
@@ -71,15 +78,14 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 			else:
 				[fin_x,fin_y] = coordinates[3]
 
-		#else:	
-			#hyp = intersections[0]/math.sin(intersections[1])
-		#	print intersections
-		
 		z = j[2]
 
+		#add coordinates to final_side
 		final_coord = fin_x/1.0,fin_y/1.0,z
 		final_coord = list(final_coord)
 		final_side.append(final_coord)
+
+	#add final_side to dictionary of sides
 	side_dict[side_num] = list(side_dict[side_num])
 	side_dict[side_num].append(final_side)
 	return side_dict
