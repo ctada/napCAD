@@ -1,13 +1,14 @@
 """Shivali Chandra
 Restructured code that takes coordinates of sides and axes of rotation, and rotates the sides 
-until they meet, forming a closed 3D shape.
+until they meet, forming a closed 3D shape. As of 5/3/15 can fold cubes, square pyramids, and 
+other prisms with square bases.
 """
 
 import numpy as np
 import math
 import collections
 
-def find_intersection_distances(p1,y1,x1,y2,x2):
+"""def find_intersection_distances(p1,y1,x1,y2,x2):
 	if y2-y1 == 0:
 		dist = math.fabs(p1[1]-y1)
 	elif x2-x1 == 0:
@@ -25,13 +26,13 @@ def find_intersection_distances(p1,y1,x1,y2,x2):
 		angle = 0.0
 	else:
 		angle = math.asin(dist/hypotenuse)
-	return dist,angle
+	return dist,angle"""
 
-def move_to_actual_coord(old_side,side_dict,side_num,theta):
-	"""Change the xy coordinates of the sides to the correct values from the original image
+"""def move_to_actual_coord(old_side,side_dict,side_num,theta):
+	Change the xy coordinates of the sides to the correct values from the original image
 		Input: side coordinates, sides dictionary
 		Output: new side coordinates in the sides dictionary	
-	"""
+	
 	final_side = list()
 	y1 = old_side[0][1]
 	x1 = old_side[0][0]
@@ -81,11 +82,101 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		final_side.append(final_coord)
 	side_dict[side_num] = list(side_dict[side_num])
 	side_dict[side_num].append(final_side)
+	return side_dict"""
+
+def find_coordinates(p1,p2,x1,y1,axis_x1,axis_y1,axis_x2,axis_y2,theta):
+	"""Change the xy coordinates of the sides to the correct values from the original image
+		Input: new point coordinates, old point coordinates, axes points, theta
+		Output: translated xy coordinates
+	"""
+	#conditional statements to check if folding lines are horizontal or vertical (special cases)
+	if (axis_x2>axis_x1) and (axis_y2-axis_y1==0):
+		#check to see which direction to move coordinates, inwards or outwards
+		if math.degrees(theta) <= 90:
+			#set new x,y coordinates based upon conditional statement
+			x,y = p2[0],axis_y2+math.fabs(p1[1]-y1)
+		else:
+			x,y = p2[0],axis_y2-math.fabs(p1[1]-y1)
+	elif (axis_x2<axis_x1) and (axis_y2-axis_y1==0):
+		if math.degrees(theta) <= 90:
+			x,y = p2[0],axis_y2-math.fabs(p1[1]-y1)
+		else:
+			x,y = p2[0],axis_y2+math.fabs(p1[1]-y1)
+	elif (axis_y2>axis_y1) and (axis_x2-axis_x1==0):
+		if math.degrees(theta) <= 90:
+			x,y = axis_x2-math.fabs(p1[0]-x1),p2[1]
+		else:
+			x,y = axis_x2+math.fabs(p1[0]-x1),p2[1]
+	elif (axis_y2<axis_y1) and (axis_x2-axis_x1==0):
+		if math.degrees(theta) <= 90:
+			x,y = axis_x2+math.fabs(p1[0]-x1),p2[1]
+		else:
+			x,y = axis_x2-math.fabs(p1[0]-x1),p2[1]
+	#in this case, the folding line is diagonal
+	else:
+		#slope of actual folding line
+		axis_slope = (axis_y2-axis_y1)/(axis_x2-axis_x1)
+		#slope of final coordinate
+		point_slope = -1/axis_slope
+		#intersection point of not-translated coordinate, base folding line
+		int_x,int_y = p1[0],0
+		#distance between intersection point and right axis coordinate (not-translated)
+		axis_dist = x1-int_x
+		point_dist = p1[1]-y1
+		#calculating intersection point on actual folding line
+		intersect_x = axis_x2 - (axis_dist*(1/math.sqrt(1+(point_slope**2))))
+		intersect_y = axis_y2 - (axis_dist*(point_slope/math.sqrt(1+(point_slope**2))))
+		#find final translated x,y coordinates, check if move points inwards or outwards
+		if math.degrees(theta) <= 90:
+			x = axis_x2 - (point_dist*(1/math.sqrt(1+(point_slope**2))))
+			y = axis_y2 - (point_dist*(point_slope/math.sqrt(1+(point_slope**2))))
+		else:
+			x = axis_x2 + (point_dist*(1/math.sqrt(1+(point_slope**2))))
+			y = axis_y2 + (point_dist*(point_slope/math.sqrt(1+(point_slope**2))))
+	return x,y
+
+def move_to_actual_coord(old_side,side_dict,side_num,theta):
+	"""Move the side and store the new coordinates in the dictionary
+		Input: side coordinates, sides dictionary, theta
+		Output: new side coordinates in the sides dictionary
+	"""
+	final_side = list()
+	#x and y coordinates of right point of folding axis for side normalized to 0,0's
+	x2 = old_side[len(old_side)-1][0]
+	y2 = old_side[len(old_side)-1][1]
+	#x and y coordinates of the two points defining the actual side's folding axis
+	xaxis1 = side_dict[side_num][1][0][0]
+	yaxis1 = side_dict[side_num][1][0][1]
+	xaxis2 = side_dict[side_num][1][len(old_side)-1][0]
+	yaxis2 = side_dict[side_num][1][len(old_side)-1][1]
+	
+	#iterate through each point in the folded side (non-translated)
+	for i,j in enumerate(old_side):
+		#current x,y,z (z will remain the same)
+		x = j[0]
+		y = j[1]
+		z = j[2]
+
+		#actual x and y coordinates of the point before rotation (not normalized)
+		real_x = side_dict[side_num][1][i][0]
+		real_y = side_dict[side_num][1][i][1]
+
+		#call function to translate x,y coordinates
+		x,y = find_coordinates((x,y),(real_x,real_y),x2,y2,xaxis1,yaxis1,xaxis2,yaxis2,theta)
+		
+		#add to final_side list
+		final_coord = x/1.0,y/1.0,z
+		final_coord = list(final_coord)
+		final_side.append(final_coord)
+
+	#add final_side to sides dictionary, return dictionary
+	side_dict[side_num] = list(side_dict[side_num])
+	side_dict[side_num].append(final_side)
 	return side_dict
 
 def transform_side(side_num,side_dict,theta):
 	"""Transform the coordinates of the side onto the perpendicular plane using Euler-Rodrigues formula
-		Input: side coordinates, plane
+		Input: side coordinates, sides dictionary, theta
 		Output: new coordinates
 	"""
 	side = side_dict[side_num][0]
@@ -112,17 +203,26 @@ def transform_side(side_num,side_dict,theta):
 		#round points to nearest whole number, add to list of transformed side coordinates
 		folded_vector = round(transform_vector[0]),round(transform_vector[1]),round(transform_vector[2])
 		new_side.append(folded_vector)
-
+	#call function to translate the x,y coordinates with relation to the actual side coordinates
 	moved_side = move_to_actual_coord(new_side,side_dict,side_num,theta)
 	return moved_side
 
 def output(theta,final_list):
+	"""Function takes each point and returns the x,y,z coordinates in three lists.
+		Input: theta (for testing), final sides dictionary
+		Output: three lists of x,y,z
+	"""
+	#create 3 empty lists for the x,y,z coordinate values
 	x = list()
 	y = list()
 	z = list()
 	final_coordinates = []
+
+	#iterate through dictionary to add the side coordinates to a list
 	for i in final_list:
 		final_coordinates.append(final_list[i][2]) 
+
+	#iterate through coordinate list to create three lists of x,y, and z respectively
 	for i in final_coordinates:
 		for j in i: 
 			x.append(j[0])
@@ -131,12 +231,21 @@ def output(theta,final_list):
 	return x,y,z
 
 def check_sides(run,temp,theta,fin):
+	"""Recursive function takes in each side and continuously checks for sides to meet up
+		Input: sides that are being folded, temporary dict with sides to check against, theta, 
+		full list of sides_old_coordinates
+		Output: final theta, dictionary of final sides
+	"""
+	#create list and dictionaries for storing points
 	vector_sides = temp
 	data = []
 	redo_sides = {}
 	new_run = {}
+
+	#iterate through dictionary of the sides still being folded
 	for i in run: 
 		position = run[i][2]
+		#create keys of the sets of two points that define each line in a side
 		for j in range(1,len(position)):
 			if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])) and (position[j][2]>position[j-1][2]):
 				key = str(position[j])+str(position[j-1])
@@ -144,72 +253,104 @@ def check_sides(run,temp,theta,fin):
 				key = str(position[j])+str(position[j-1])
 			else:
 				key = str(position[j-1])+str(position[j])
+			#add keys, side numbers as values to a dictionary
 			if key in vector_sides:
 				vector_sides[key].append(i)
 			else: 
 				vector_sides[key] = [i]
+	
 	for k in vector_sides:
+		#if a key has more than one value, two sides have folded to meet up
 		if len(vector_sides[k])>1:
 			data.append(vector_sides[k][0])
 			data.append(vector_sides[k][1])
+	
+	#check to see if all the sides have met another side, new_side_list returns those that have not
 	new_side_list = list(set(run.keys())-set(data))
+	
+	#if there are no sides left to fold, return the final list of coordinates
 	if not new_side_list:
 		return theta,run
 	else:
+		#if there are, add to theta to have the side fold again
 		new_t = theta+1
+
+		#create a new dictionary with only the sides that need to be folded
 		for i in run.keys():
 			if i in new_side_list:
 				redo_sides[i] = [run[i][0]]
 				redo_sides[i].append(run[i][1])
 			else:
+				#create a temp dictionary of sides that don't need to be folded (to compare coordinates with)
 				new_run[i] = run[i]
+			#call function to fold sides again
 			redone = transform_side(i,redo_sides,new_t)
+		
+		#add the completed and the newly folded sides to a new list
 		final = redone.copy()
 		final.update(new_run)
+		#call this function again to check if all sides have met another side
 		return check_sides(redone,new_run,new_t,final)
 
 def make_sides(sides,theta):
-	"""call things"""
+	"""Function iterates through the sides and folds each one, returning new coordinates
+		Input: sides dictionary, theta
+		Output: the transformed sides
+	"""
 	length = len(sides)
+	
+	#iterate through sides to fold each side individually
 	for i in sides:
 		side = sides[i][0]
 		transformed_side = transform_side(i,sides,theta)
 	return transformed_side
 
 def main(sides,xy_coord):
-	#create dictionary of sides as keys, both sets of xy coordinates as values
+	"""Main function that creates a dictionary with the two lists and calls other functions
+		Input: list of sides normalized to 0,0, and list of actual side coordinates
+		Output: the list of x,y,z coordinates of the final folded shape
+	"""
 	theta = 0
 	sides_old_coordinates = {}
+
+	#iterate through the sides to create a dictionary with side number as key, 
+	#val 1 as the side normalized to 0, and val 2 as the actual side coordinates
 	for i in range(0,len(sides)):
 		val1 = sides[i]
 		val2 = xy_coord[i]
 		if i not in sides_old_coordinates:
 			sides_old_coordinates[i] = val1,val2
+	
+	#call function to iterate through sides and fold each one
 	run_fxn = make_sides(sides_old_coordinates,theta)
+	#call function to check that sides have met up (prism has been folded)
 	final_sides = check_sides(run_fxn,{},theta,{})
+	#call function to output the final lists of x,y,z coordinates
 	return output(final_sides[0],final_sides[1])
 	
 if __name__ == "__main__":
 
-	"""CUBE WORKS
+	#following hard-coded shapes are for testing purposes
+	"""CUBE (WORKS)
 	side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
 	actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
 	print main(side_coordinates,actual_coordinates)"""
 
-	"""PYRAMID DOESN'T WORK
-	side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
-	actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,0]))
-	print main(side_coordinates,actual_coordinates)"""
-
-	"""SQUARE PYRAMID WORKS
+	"""SQUARE PYRAMID (WORKS)"""
 	side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
 	actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
-	print main(side_coordinates,actual_coordinates)"""
+	
+	print main(side_coordinates,actual_coordinates)
 
-	"""TRIANGULAR PRISM WIP
+	"""TRIANGULAR PRISM (WIP)
 	side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[3,6],[6,0]))
 	actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[9,0],[6,6]))
 
 	print main(side_coordinates,actual_coordinates)"""
+	
+	"""PYRAMID (DOESN'T WORK)
+	side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
+	actual_coordinates = (([6,0],[0,0],[3,6]),([3,6],[6,12],[9,6]),([9,6],[12,0],[6,0]))
 
+	print main(side_coordinates,actual_coordinates)"""
