@@ -64,8 +64,9 @@ def find_folds(file_path, outside_points):
 	for item in outside:
 		outside_contour.append(tuple(item[0])) 
 
+	print len(outside_contour)
 	# Find only the inside points of the contour - this defines fold line points for folding an open topped box
-	outside_points = outside_contour 
+	outside_points = list(outside_contour) # Preventing the original list from being changed
 
 	x = []
 	y = []
@@ -98,6 +99,7 @@ def find_folds(file_path, outside_points):
 		for point in outside_points:
 			if point[xory] == minmax:
 				outside_points.remove(point)
+				print len(outside_contour)
 
 	remove_points(maxx1, 0)
 	remove_points(maxx2, 0)
@@ -114,4 +116,6 @@ def find_folds(file_path, outside_points):
 					[outside_points[2], outside_points[3]],
 					[outside_points[3], outside_points[0]]]
 
+	print outside_contour
+	print len(outside_contour)
 	return outside_contour, fold_lines

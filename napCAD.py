@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install python-imaging-tk
 #from basic_cube import MVP_image_to_3D as mvp
-import stl_test
+import stl
 import folding_v2 as fold
 import integrationtest as it
 import matplotlib, sys
@@ -56,7 +56,7 @@ def processImg():
     #x,y,z = mvp.output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
    
     
-    stl, triangles = stl_test.triangulation(x,y,z) #triangulates 3D points
+    to_stl, triangles = stl.triangulation(x,y,z) #triangulates 3D points
 
     fig = plt.figure() #creates figure 
     #based off of http://matplotlib.org/examples/user_interfaces/embedding_in_tk.html
@@ -77,7 +77,7 @@ def processImg():
     #scrollbar.config(command=canvas.get_tk_widget().yview)
     canvas.show() 
     
-    saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(stl)).pack(side=tk.TOP, expand=1) #when clicked, open save dialog for STL file
+    saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(to_stl)).pack(side=tk.TOP, expand=1) #when clicked, open save dialog for STL file
     
 def show_frame():
     _, frame = cap.read()
@@ -116,7 +116,7 @@ def save_as(content):
         defaultextension=".stl",                
         filetypes = (("napCAD STL", "*.stl"),("testText", ".txt")), 
         title="Save STL as...")    #in the save function
-    stl_test.stl_write(f,content)
+    stl.stl_write(f,content)
 
 def _quit():
     cap.release()
