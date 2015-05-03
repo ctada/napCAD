@@ -149,7 +149,8 @@ def face_finder(maincontour, foldlines):
 
 		rotatedFaceLists[faceindex]=[rotatedFaceLists[faceindex][0]]+rotatedFaceLists[faceindex][1:][::-1]
 
-		if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
+		# if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
+		if upsideDown ^ backwards:
 			culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
 
 
@@ -218,7 +219,7 @@ if __name__ == '__main__':
 	foldlinesRect=[[(2,2),(3,2)],[(3,2),(3,3)],[(3,3),(2,3)],[(2,3),(2,2)]]
 
 	# a=face_finder(testshapeRect,foldlinesRect)
-	a=face_finder(testshapePyramid,foldlinesPyramid)
+	# a=face_finder(testshapePyramid,foldlinesPyramid)
 	# a=face_finder(testshapeSquare,foldlinesSquare)
 	print a[0]
 	print a[1]
