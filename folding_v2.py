@@ -326,8 +326,7 @@ def main(sides,xy_coord):
 	#call function to check that sides have met up (prism has been folded)
 	final_sides = check_sides(run_fxn,{},theta,{})
 	#call function to output the final lists of x,y,z coordinates
-	return final_sides
-	#return output(final_sides[0],final_sides[1])
+	return output(final_sides[0],final_sides[1])
 	
 if __name__ == "__main__":
 
