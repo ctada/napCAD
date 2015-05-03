@@ -11,8 +11,8 @@ def napCAD_main():
 
 	# testshapePyramid=
 
-	#faces=face_finder(testshapeRect,foldlinesRect)
-	faces=face_finder(testshapeSquare, foldlinesSquare)
+	faces=face_finder(testshapeRect,foldlinesRect)
+	#faces=face_finder(testshapeSquare, foldlinesSquare)
 	shape3D=main(faces[0],faces[1])
 	print 'napCAD_main just ran!'
 	return shape3D
