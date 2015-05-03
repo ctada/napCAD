@@ -10,6 +10,7 @@ from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install 
 import stl_test
 from basic_cube import MVP_image_to_3D as mvp
 import folding_v2 as fold
+import integrationtest as it
 import matplotlib, sys
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
@@ -45,8 +46,8 @@ def processImg():
 
     side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
     actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
-    x, y, z= fold.main(side_coordinates,actual_coordinates)
-
+    #x, y, z= fold.main(side_coordinates,actual_coordinates)
+    x,y,z= it.napCAD_main()
     #x,y,z = mvp.output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
    
     #triangulate
