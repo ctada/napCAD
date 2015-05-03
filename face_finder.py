@@ -79,20 +79,36 @@ def face_finder(maincontour, foldlines):
 
 		#If it's a regular side
 		if totalfoldlines == 1:
+			alreadyRotated=False
 			for point in enumerate(face):
+				if alreadyRotated:
+					break
 				point2=point[1]
 				index=point[0]
 				point1=face[index-1]
 
-				xfactor=point1[0]
-				yfactor=point1[1]
-				newpoint2=[point2[0]-xfactor,point2[1]-yfactor]
-				angle=math.degrees(calc_angle(newpoint2,[1,0]))
-				newface=[]
-				for point in face:
-					newpoint=[point[0]-xfactor,point[1]-yfactor]
-					newface.append(newpoint)
-				rotatedFace=rotatePolygon(newface,angle)
+				if [point1,point2] in foldlines:
+					xfactor=point1[0]
+					yfactor=point1[1]
+					newpoint2=[point2[0]-xfactor,point2[1]-yfactor]
+					angle=math.degrees(calc_angle(newpoint2,[1,0]))
+					newface=[]
+					for point in face:
+						newpoint=[point[0]-xfactor,point[1]-yfactor]
+						newface.append(newpoint)
+					rotatedFace=rotatePolygon(newface,angle)
+					alreadyRotated=True
+				elif [point2,point1] in foldlines:
+					xfactor=point2[0]
+					yfactor=point2[1]
+					newpoint1=[point1[0]-xfactor,point1[1]-yfactor]
+					angle=math.degrees(calc_angle(newpoint1,[1,0]))
+					newface=[]
+					for point in face:
+						newpoint=[point[0]-xfactor,point[1]-yfactor]
+						newface.append(newpoint)
+					rotatedFace=rotatePolygon(newface,angle)
+					alreadyRotated=True
 
 		uprightFace=[]
 
@@ -192,11 +208,19 @@ def breadth_first(startPoint, connectionDict): #Modified from http://stackoverfl
 
 if __name__ == '__main__':
 
-	testshape=[(1,0),(2,0),(2,1),(3,1),(3,2),(2,2),(2,3),(1,3),(1,2),(0,2),(0,1),(1,1)]
-	foldlines=[[(1,1),(2,1)],[(2,1),(2,2)],[(2,2),(1,2)],[(1,2),(1,1)]]
+	testshapeSquare=[(1,0),(2,0),(2,1),(3,1),(3,2),(2,2),(2,3),(1,3),(1,2),(0,2),(0,1),(1,1)]
+	foldlinesSquare=[[(1,1),(2,1)],[(2,1),(2,2)],[(2,2),(1,2)],[(1,2),(1,1)]]
 
+	testshapePyramid=[(0,2),(1,3),(2,4),(3,3),(4,2),(3,1),(2,0),(1,1)]
+	foldlinesPyramid=[[(1,3),(3,3)],[(3,3),(3,1)],[(3,1),(1,1)],[(1,1),(1,3)]]
 
-	# print face_finder(testshape,foldlines)
-	a=face_finder(testshape,foldlines)
+	testshapeRect=[(2,0),(3,0),(3,2),(5,2),(5,3),(3,3),(3,5),(2,5),(2,3),(0,3),(0,2),(2,2)]
+	foldlinesRect=[[(2,2),(3,2)],[(3,2),(3,3)],[(3,3),(2,3)],[(2,3),(2,2)]]
+
+	# a=face_finder(testshapeRect,foldlinesRect)
+	a=face_finder(testshapePyramid,foldlinesPyramid)
+	# a=face_finder(testshapeSquare,foldlinesSquare)
 	print a[0]
 	print a[1]
+
+	# print math.degrees(calc_angle([1,0],[0,1]))
