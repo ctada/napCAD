@@ -98,6 +98,8 @@ def face_finder(maincontour, foldlines):
 						newface.append(newpoint)
 					rotatedFace=rotatePolygon(newface,angle)
 					alreadyRotated=True
+					# print point1
+
 				elif [point2,point1] in foldlines:
 					xfactor=point2[0]
 					yfactor=point2[1]
@@ -109,6 +111,7 @@ def face_finder(maincontour, foldlines):
 						newface.append(newpoint)
 					rotatedFace=rotatePolygon(newface,angle)
 					alreadyRotated=True
+					# print point2
 
 		uprightFace=[]
 
@@ -142,22 +145,22 @@ def face_finder(maincontour, foldlines):
 		# faceindex=culledFaceLists.index(face)  #define this earlier
 		zeroindex=uprightFace.index([0,0])
 		shifter=(-zeroindex)
-
+		if backwards ^ upsideDown:
+			originalShifter=shifter-1
+		else:
+			originalShifter=shifter
+# 
+# 
 		rotatedFaceLists[faceindex]=numpy.array(numpy.roll(rotatedFaceLists[faceindex],shifter,axis=0)).tolist()
 
-		culledFaceLists[faceindex]=numpy.array(numpy.roll(culledFaceLists[faceindex],shifter,axis=0)).tolist()
-
+		culledFaceLists[faceindex]=numpy.array(numpy.roll(culledFaceLists[faceindex],originalShifter,axis=0)).tolist()
+		
 		rotatedFaceLists[faceindex]=[rotatedFaceLists[faceindex][0]]+rotatedFaceLists[faceindex][1:][::-1]
 
-		# if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
-		if upsideDown ^ backwards:
-			culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
-
-
-
-
-	# print culledFaceLists[1]
-	# print rotatedFaceLists[1]
+		if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
+		# if upsideDown ^ backwards:
+			# culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
+			culledFaceLists[faceindex]=numpy.array(culledFaceLists[faceindex][::-1]).tolist()
 
 
 
