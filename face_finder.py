@@ -4,6 +4,7 @@
 
 #From http://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python
 import math
+import numpy
 
 def dotproduct(v1, v2):
 	return sum((a*b) for a, b in zip(v1, v2))
@@ -55,11 +56,13 @@ def face_finder(maincontour, foldlines):
 			faceSets.append(set(face))
 			culledFaceLists.append(face)
 
-	rotatedFaceLists=[]
+	rotatedFaceLists=[]  #the normalized and translated faces
+	regularFaceLists=[]  #the original lists, but flipped if needed2
 
 
 	#count fold lines to see if it's a base or not
 	for face in culledFaceLists:
+		faceindex=culledFaceLists.index(face)
 		totalfoldlines=0
 		for point in enumerate(face):
 			point2=point[1]
@@ -69,8 +72,9 @@ def face_finder(maincontour, foldlines):
 				totalfoldlines+=1
 
 		#If it's a base, FOR NOW just remove it
+
 		if totalfoldlines>=2:
-			culledFaceLists.pop(culledFaceLists.index(face))
+			culledFaceLists.pop(faceindex)
 
 
 		#If it's a regular side
@@ -113,10 +117,33 @@ def face_finder(maincontour, foldlines):
 			for coord in enumerate(newpoint):
 				if coord[1] < 1e-5 and coord > -1e-5:
 					newpoint[coord[0]]=0
+
+
 			uprightFace.append(newpoint)
 		rotatedFaceLists.append(uprightFace)
+
+		#Set 0,0 and the corresponding point at the correct spot
+		# faceindex=culledFaceLists.index(face)  #define this earlier
+		zeroindex=uprightFace.index([0,0])
+		shifter=(-zeroindex)
+
+		rotatedFaceLists[faceindex]=numpy.array(numpy.roll(rotatedFaceLists[faceindex],shifter,axis=0)).tolist()
+
+		culledFaceLists[faceindex]=numpy.array(numpy.roll(culledFaceLists[faceindex],shifter,axis=0)).tolist()
+
+		rotatedFaceLists[faceindex]=[rotatedFaceLists[faceindex][0]]+rotatedFaceLists[faceindex][1:][::-1]
+
+		if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
+			culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
+
+
+
+
 	# print culledFaceLists[1]
 	# print rotatedFaceLists[1]
+
+
+
 
 	#Format lists as tuples of tuples of lists
 	a=[]
@@ -170,4 +197,6 @@ if __name__ == '__main__':
 
 
 	# print face_finder(testshape,foldlines)
-	print face_finder(testshape,foldlines)
+	a=face_finder(testshape,foldlines)
+	print a[0]
+	print a[1]

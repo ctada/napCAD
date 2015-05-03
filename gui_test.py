@@ -11,6 +11,7 @@ from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install 
 #from basic_cube import MVP_image_to_3D as mvp
 import integrationtest as it
 import folding_v2 as fold
+import integrationtest as it
 import matplotlib, sys
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')

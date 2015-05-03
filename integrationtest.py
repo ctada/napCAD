@@ -8,8 +8,7 @@ from folding_v2 import make_dictionaries
 
 	# testshapePyramid=
 
-
-
-	#faces=face_finder(testshapeSquare,foldlinesSquare)
-	#shape3D=make_dictionaries(faces[0],faces[1])
-	#return shape3D
+	faces=face_finder(testshapeSquare,foldlinesSquare)
+	shape3D=make_dictionaries(faces[0],faces[1])
+	print 'napCAD_main just ran!'
+	return shape3D
