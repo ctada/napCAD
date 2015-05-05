@@ -40,41 +40,15 @@ def processImg():
     root.wait_window(d.top)
     vertNum = d.getNum() 
     sides = rImg.find_folds("open_cube.jpg", int(vertNum))
-    #side_lists = mvp.normalize_sides(sides)
-    #front_2D = side_lists[0]
-    #left_side_2D = side_lists[1]
-    #back_2D = side_lists[2]
-    #right_side_2D = side_lists[3]
-    #top_2D = side_lists[4]
-    #bottom_2D = side_lists[5]
-
-    #side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
-    #actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
-    #x, y, z= fold.make_dictionaries(side_coordinates,actual_coordinates)
-    # print 'maincontour'
-    # print sides[0]
-    # print 'sides'
-    # print sides[1]
+  
     faces=ff.face_finder(sides[0], sides[1])
-    #faces=face_finder(testshapeSquare, foldlinesSquare)
     x, y, z=fold.main(faces[0],faces[1])
-    #x,y,z= it.napCAD_main()
-    #print 'integration test done'
-    #root.quit()
-    #x,y,z = mvp.output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
-   
     
     to_stl, triangles = stl.triangulation(x,y,z) #triangulates 3D points
 
     fig = plt.figure() #creates figure 
     #based off of http://matplotlib.org/examples/user_interfaces/embedding_in_tk.html
     canvas = FigureCanvasTkAgg(fig, master=root) #creates canvas with figure
-    #yScrollbar = Scrollbar(root)
-    #yScrollbar.grid(row=0, column=1, sticky=Tkconstants.NS)
-    #canvas.config(yscrollcommand=yScrollbar.set)
-    #yScrollbar.config(command=canvas.yview)
-
-
     ax = fig.add_subplot(1, 1, 1, projection='3d') # sets plot to be 3D
     ax.plot_trisurf(x, y, z, triangles=triangles, cmap=plt.cm.Spectral) #plots triangulated points in 3D, tri.simplices references the faces of the triangles
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -82,7 +56,6 @@ def processImg():
     canvas.mpl_connect('key_press_event', key_press_handler) #event handling for plot
     toolbar = NavigationToolbar2TkAgg( canvas, root ) #creates toolbar for navigating plot
     toolbar.update()
-    #scrollbar.config(command=canvas.get_tk_widget().yview)
     canvas.show() 
     
     saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(to_stl)).pack(side=tk.TOP, expand=1) #when clicked, open save dialog for STL file
@@ -155,8 +128,12 @@ def handler():
 class VertexDialog:
     """
     Custom dialog box to ask for number of vertices in drawn sketch (geometric net)
+    Based off of http://effbot.org/tkinterbook/tkinter-dialog-windows.htm
     """
     def __init__(self, parent):
+        """
+        Creates and opens new dialog window, asking for number of expected vertices in the sketch
+        """
         self.inputVertNum = 0
         top = self.top = tk.Toplevel(parent)
         tk.Label(top, text="Photo Taken! \n Please enter the number of vertices in the sketch.").pack()
@@ -167,10 +144,16 @@ class VertexDialog:
         b.pack(pady=5)
 
     def ok(self):
+        """
+        Reads in input to window, closes window
+        """
         self.inputVertNum= self.e.get()
         self.top.destroy()
 
     def getNum(self):
+        """
+        Returns expected number of vertices in sketch, as entered into the dialog window
+        """
         return self.inputVertNum
 
 cap = cv2.VideoCapture(0) #starts recording 
@@ -183,9 +166,6 @@ root.title('napCAD')
 
 root.protocol("WM_DELETE_WINDOW", handler) #if window is closed or the Esc key is pressed, confirm quit and exit program
 root.bind('<Escape>', lambda e: root.quit())
-
-#scrollbar = tk.Scrollbar(root)
-#scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 lmain = tk.Label(root)
 lmain.pack()
