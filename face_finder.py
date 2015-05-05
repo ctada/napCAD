@@ -21,6 +21,8 @@ def rotatePolygon(polygon,theta):
     """Rotates the given polygon which consists of corners represented as (x,y),
     around the ORIGIN, clock-wise, theta degrees"""
     theta = math.radians(theta)
+    if polygon[polygon.index([0,0])+1][1]>0:
+    	theta=-theta
     rotatedPolygon = []
     for corner in polygon :
         rotatedPolygon.append(( corner[0]*math.cos(theta)-corner[1]*math.sin(theta) , corner[0]*math.sin(theta)+corner[1]*math.cos(theta)) )
@@ -61,23 +63,32 @@ def face_finder(maincontour, foldlines):
 
 
 	#count fold lines to see if it's a base or not
+	thingsToRemove=[]
 	for face in culledFaceLists:
 		faceindex=culledFaceLists.index(face)
 		totalfoldlines=0
+		print face
 		for point in enumerate(face):
 			point2=point[1]
 			index=point[0]
 			point1=face[index-1]
-			if [point1,point2] in foldlines:
+			if [point1,point2] in foldlines or [point2,point1] in foldlines:
 				totalfoldlines+=1
+		print totalfoldlines
 
 		#If it's a base, FOR NOW just remove it
+		# print culledFaceLists
 
 		if totalfoldlines>=2:
-			culledFaceLists.pop(faceindex)
+			thingsToRemove.append(faceindex)
+
+		# 	culledFaceLists.remove(face)
+
+		# print culledFaceLists
 
 
 		#If it's a regular side
+
 		if totalfoldlines == 1:
 			alreadyRotated=False
 			for point in enumerate(face):
@@ -98,7 +109,7 @@ def face_finder(maincontour, foldlines):
 						newface.append(newpoint)
 					rotatedFace=rotatePolygon(newface,angle)
 					alreadyRotated=True
-					# print point1
+
 
 				elif [point2,point1] in foldlines:
 					xfactor=point2[0]
@@ -147,6 +158,7 @@ def face_finder(maincontour, foldlines):
 
 
 
+
 			uprightFace.append(newpoint)
 
 		rotatedFaceLists.append(uprightFace)
@@ -172,7 +184,10 @@ def face_finder(maincontour, foldlines):
 			# culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
 			culledFaceLists[faceindex]=numpy.array(culledFaceLists[faceindex][::-1]).tolist()
 
-
+	#Remove the bad faces
+	for index in thingsToRemove:
+		rotatedFaceLists.pop(index)
+		culledFaceLists.pop(index)
 
 
 	#Format lists as tuples of tuples of lists
@@ -189,6 +204,7 @@ def face_finder(maincontour, foldlines):
 			newlist.append(newpoint)
 		b.append(tuple(newlist))
 	FormattedOriginalSides=tuple(b)
+
 
 	return [FormattedNormalizedSides,FormattedOriginalSides]
 
@@ -231,10 +247,16 @@ if __name__ == '__main__':
 	testshapeRect=[(2,0),(3,0),(3,2),(5,2),(5,3),(3,3),(3,5),(2,5),(2,3),(0,3),(0,2),(2,2)]
 	foldlinesRect=[[(2,2),(3,2)],[(3,2),(3,3)],[(3,3),(2,3)],[(2,3),(2,2)]]
 
+	testshapeReal=[(364, 278), (200, 305), (205, 467), (47, 488), (40, 665), (205, 645),(209, 793), (382, 791), (381, 633), (555, 616), (557, 439), (378, 451)]
+	foldlinesReal=[[(205, 467), (205, 645)], [(205, 645), (381, 633)], [(381, 633), (378,451)], [(378, 451), (205, 467)]]
+
 	# a=face_finder(testshapeRect,foldlinesRect)
 	# a=face_finder(testshapePyramid,foldlinesPyramid)
 	# a=face_finder(testshapeSquare,foldlinesSquare)
+	a=face_finder(testshapeReal,foldlinesReal)
 	print a[0]
 	print a[1]
 
-	# print math.degrees(calc_angle([1,0],[0,1]))
+	# b=[[0,0],[1,1],[0,2],[-1,1]]
+	# print b
+	# print rotatePolygon(b,45)
