@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import pprint
 
-# Get image
 def find_folds(file_path, outside_points):
 	"""
 	Description: Finds and normalizes the outside contour and fold lines of a input box image
