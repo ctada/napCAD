@@ -19,7 +19,7 @@
   <body>
     <header>
       <div class="inner">
-        <h1>Napcad</h1>
+        <h1>NapCAD</h1>
         <h2>NapCAD is an openCV-based image to STL converter, designed to model folded forms from a sketch of the geometric net.</h2>
         <a href="https://github.com/ctada/napCAD" class="button"><small>View project on</small> GitHub</a>
       </div>
@@ -80,12 +80,19 @@ $ sudo apt-get install python-imaging-tk
 sudo apt-get build-dep python-matplotlib
 </code></pre>
 2. The following error may show up when running code that contains OpenCV:
-<pre><code>ValueError: too many values to unpack</pre></code> If this happens, change the beginning of line 90 in napCAD.py from “(cnts,_) ” to “_,cnts, _” and the code will run. We believe this is an issue with OpenCV versions, but we're still working on confirming that hypothesis. 
+<pre><code>ValueError: too many values to unpack</pre></code> If this happens, change the beginning of line 74 in napCAD.py and line 30 in read_box_image.py from “(cnts,_) ” to “_,cnts, _” and the code will run. We believe this is an issue with OpenCV versions, but we're still working on confirming that hypothesis. 
 </p>
 
 
 <h3>
 <a id="proj-docs" class="anchor" href="#proj-docs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Documentation</h3>
+<p>Documentation for each module is below; 
+  <ul>
+    <li><a href="napCAD.html" class="user-mention">napCAD (main) module</a></li>
+    <li><a href="read_box_image.html" class="user-mention">read_box_image module</a></li>
+    <li><a href="facefinder.html" class="user-mention">facefinder module</a></li>
+    <li><a href="folding_v2.html" class="user-mention">folding module</a></li>
+  </ul>
 <p>Click on any of the links below to be redirected to documents that document our progress through the class:</p>
 
 <ul>
