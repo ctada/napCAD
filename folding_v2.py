@@ -24,11 +24,7 @@ def find_intersection_distances(p1,y1,x1,y2,x2):
 		y_intersect = perp_slope * x_intersect + c2
 		dist = math.sqrt((x_intersect-p1[0])**2+(y_intersect-p1[1])**2)
 	hypotenuse = math.sqrt((x2-p1[0])**2+(y2-p1[1])**2)
-	if hypotenuse == 0:
-		angle = 0.0
-	else:
-		angle = math.asin(dist/hypotenuse)
-	return dist,angle
+	return dist
 
 def move_to_actual_coord(old_side,side_dict,side_num,theta):
 	"""Change the xy coordinates of the sides to the correct values from the original image
@@ -53,7 +49,7 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		x = side_dict[side_num][1][i][0]
 		y = side_dict[side_num][1][i][1]
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
-		dist = intersections[0]
+		dist = intersections
 		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
 		#check which direction the fold needs to be (inwards or outwards) depending on axis orientation

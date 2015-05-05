@@ -8,9 +8,11 @@ import cv2
 import numpy as np
 from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install python-imaging-tk
 #from basic_cube import MVP_image_to_3D as mvp
+import read_box_image as rImg
 import stl
 import folding_v2 as fold
 import integrationtest as it
+import face_finder as ff
 import matplotlib, sys
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
@@ -37,8 +39,7 @@ def processImg():
     d= VertexDialog(root) #asks for number of vertices in final form
     root.wait_window(d.top)
     vertNum = d.getNum() 
-
-    #sides = mvp.find_rectangles("napSketch.jpg")#, vertNum)
+    sides = rImg.find_folds("open_cube.jpg", int(vertNum))
     #side_lists = mvp.normalize_sides(sides)
     #front_2D = side_lists[0]
     #left_side_2D = side_lists[1]
@@ -47,10 +48,17 @@ def processImg():
     #top_2D = side_lists[4]
     #bottom_2D = side_lists[5]
 
-    side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
-    actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
+    #side_coordinates = (([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]),([0,0],[3,6],[6,0]))
+    #actual_coordinates = (([6,6],[0,9],[6,12]),([6,12],[9,18],[12,12]),([12,12],[18,9],[12,6]),([12,6],[9,0],[6,6]))
     #x, y, z= fold.make_dictionaries(side_coordinates,actual_coordinates)
-    x,y,z= it.napCAD_main()
+    # print 'maincontour'
+    # print sides[0]
+    # print 'sides'
+    # print sides[1]
+    faces=ff.face_finder(sides[0], sides[1])
+    #faces=face_finder(testshapeSquare, foldlinesSquare)
+    x, y, z=fold.main(faces[0],faces[1])
+    #x,y,z= it.napCAD_main()
     #print 'integration test done'
     #root.quit()
     #x,y,z = mvp.output_xyz(front_2D,left_side_2D,back_2D,right_side_2D,top_2D,bottom_2D)
@@ -80,6 +88,9 @@ def processImg():
     saveButton = tk.Button(master=root, text='Save As', command=lambda:save_as(to_stl)).pack(side=tk.TOP, expand=1) #when clicked, open save dialog for STL file
     
 def show_frame():
+    """
+    Shows video feed with pathfinding feedback so that user knows when to capture image of sketch for processing
+    """
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)    
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # Convert the image to grayscale
@@ -111,6 +122,11 @@ def show_frame():
     lmain.after(10, show_frame)
 
 def save_as(content):
+    """
+    Writes triangulated faces of object to STL file
+    input: numpy array of triangulated faces
+    output: None (writes to file)
+    """
     f = tkFileDialog.asksaveasfilename(   #this will make the file path a string
         parent= root,
         defaultextension=".stl",                
@@ -119,21 +135,30 @@ def save_as(content):
     stl.stl_write(f,content)
 
 def _quit():
+    """
+    Safely exits program, closing webcam and GUI. 
+    """
     cap.release()
     cv2.destroyAllWindows()
     root.quit()     # stops mainloop
     root.destroy()  # this is necessary on Windows to prevent
                     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 def handler():
+    """
+    Confirms quit when user closes out of window
+    """
     if tkMessageBox.askokcancel("Quit?", "Are you sure you want to quit?"):
         root.quit()
 
 
 class VertexDialog:
+    """
+    Custom dialog box to ask for number of vertices in drawn sketch (geometric net)
+    """
     def __init__(self, parent):
         self.inputVertNum = 0
         top = self.top = tk.Toplevel(parent)
-        tk.Label(top, text="Photo Taken! \n Please enter the number of vertices in the geometry.").pack()
+        tk.Label(top, text="Photo Taken! \n Please enter the number of vertices in the sketch.").pack()
         self.e = tk.Entry(top)
         self.e.pack(padx=5)
 
@@ -147,10 +172,10 @@ class VertexDialog:
     def getNum(self):
         return self.inputVertNum
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0) #starts recording 
 
 if not cap.isOpened(): 
-    cap.open()
+    cap.open() #turns on camera
 
 root = tk.Tk()
 root.title('napCAD')
