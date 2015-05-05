@@ -5,13 +5,13 @@ import pprint
 # Get image
 def find_folds(file_path, outside_points):
 	"""
-	Description: Finds the 6 main views of a cube in a given image
+	Description: Finds and normalizes the outside contour and fold lines of a input box image
 	Input:
 		- file_path - Path to jpeg of drawing
 		- outside_points - Number of vertices on the outside contour of the image (passed in form GUI input)
 	Returns:
-		- outside_contour - outside contour of the drawing
-		- fold_lines - fold lines of the drawing
+		- norm_outside_contour - normalized outside contour of the drawing
+		- norm_fold_lines - normalized fold lines of the drawing
 	"""
 	# Get the input image
 	image = cv2.imread(file_path)
@@ -64,7 +64,6 @@ def find_folds(file_path, outside_points):
 	for item in outside:
 		outside_contour.append(tuple(item[0])) 
 
-	print len(outside_contour)
 	# Find only the inside points of the contour - this defines fold line points for folding an open topped box
 	outside_points = list(outside_contour) # Preventing the original list from being changed
 
@@ -94,12 +93,14 @@ def find_folds(file_path, outside_points):
 	y.remove(miny1)
 	miny2 = min(y)
 
+	corner_points = []
+
 	def remove_points(minmax, xory):
 		side = []
 		for point in outside_points:
 			if point[xory] == minmax:
+				corner_points.append(point)
 				outside_points.remove(point)
-				print len(outside_contour)
 
 	remove_points(maxx1, 0)
 	remove_points(maxx2, 0)
@@ -110,10 +111,53 @@ def find_folds(file_path, outside_points):
 	remove_points(miny1, 1)
 	remove_points(miny2, 1)
 
-	# Set fold lines
-	fold_lines = [[outside_points[0], outside_points[1]],
-					[outside_points[1], outside_points[2]],
-					[outside_points[2], outside_points[3]],
-					[outside_points[3], outside_points[0]]]
+	inside_points = list(outside_points)
 
-	return outside_contour, fold_lines
+	# At this points we have two lists, inside_points and corner_points, to use for normalization and finding folds
+	# We need to create a list of the outside_contour points and another list of the fold line points
+
+	# Average side vertices to normalize the inside fold lines
+	def square_sides(sides):
+		# Find the min/max x and y values
+		x = []
+		y = []
+		for vert in sides:
+			x.append(vert[0])
+			y.append(vert[1])
+
+		minx = min(x)
+		miny = min(y)
+		maxx = max(x)
+		maxy = max(y)
+
+		# Construct new squared vertex set with format |4 3|
+		#											   |1 2|
+		squared_side = [tuple([minx,miny]),tuple([maxx,miny]),tuple([maxx,maxy]),tuple([minx,maxy])]
+		return squared_side
+
+	# Final set of normalized fold line vertices
+	inside_vertices = square_sides(inside_points)
+
+	# Set fold lines
+	norm_fold_lines = [[inside_vertices[0], inside_vertices[1]],
+					[inside_vertices[1], inside_vertices[2]],
+					[inside_vertices[2], inside_vertices[3]],
+					[inside_vertices[3], inside_vertices[0]]]
+
+	# Normalize outside corner points and assemble norm_outside_contour by working around the outside contour
+	norm_outside_contour = []
+
+	norm_outside_contour.append(inside_vertices[2])
+	norm_outside_contour.append(tuple([corner_points[0][0], inside_vertices[2][1]]))
+	norm_outside_contour.append(tuple([corner_points[0][0], inside_vertices[1][1]]))
+	norm_outside_contour.append(inside_vertices[1])
+	norm_outside_contour.append(tuple([inside_vertices[1][0], corner_points[6][1]]))
+	norm_outside_contour.append(tuple([inside_vertices[0][0], corner_points[6][1]]))
+	norm_outside_contour.append(inside_vertices[0])
+	norm_outside_contour.append(tuple([corner_points[2][0], inside_vertices[0][1]]))
+	norm_outside_contour.append(tuple([corner_points[2][0], inside_vertices[3][1]]))
+	norm_outside_contour.append(inside_vertices[3])
+	norm_outside_contour.append(tuple([inside_vertices[3][0], corner_points[4][1]]))
+	norm_outside_contour.append(tuple([inside_vertices[2][0], corner_points[4][1]]))
+
+	return norm_outside_contour, norm_fold_lines
