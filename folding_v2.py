@@ -24,11 +24,7 @@ def find_intersection_distances(p1,y1,x1,y2,x2):
 		y_intersect = perp_slope * x_intersect + c2
 		dist = math.sqrt((x_intersect-p1[0])**2+(y_intersect-p1[1])**2)
 	hypotenuse = math.sqrt((x2-p1[0])**2+(y2-p1[1])**2)
-	if hypotenuse == 0:
-		angle = 0.0
-	else:
-		angle = math.asin(dist/hypotenuse)
-	return dist,angle
+	return dist
 
 def move_to_actual_coord(old_side,side_dict,side_num,theta):
 	"""Change the xy coordinates of the sides to the correct values from the original image
@@ -53,7 +49,7 @@ def move_to_actual_coord(old_side,side_dict,side_num,theta):
 		x = side_dict[side_num][1][i][0]
 		y = side_dict[side_num][1][i][1]
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
-		dist = intersections[0]
+		dist = intersections
 		coordinates = {1:(x,(dist+new_yaxis)),2:(x,(new_yaxis-dist)),3:((new_xaxis-dist),y),4:((new_xaxis+dist),y)}
 		intersections = find_intersection_distances((j[0],j[1]),y1,x1,y2,x2)
 		#check which direction the fold needs to be (inwards or outwards) depending on axis orientation
@@ -253,18 +249,43 @@ def check_sides(run,temp,theta,fin):
 		position = run[i][2]
 		#create keys of the sets of two points that define each line in a side
 		for j in range(1,len(position)):
-			if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])) and (position[j][2]>position[j-1][2]):
+			lr1x = position[j-1][0]*.8
+			ur1x = position[j-1][0]*1.2
+			lr1y = position[j-1][1]*.8
+			ur1y = position[j-1][1]*1.2
+			lr1z = position[j-1][2]*.8
+			ur1z = position[j-1][2]*1.2
+			lr2x = position[j][0]*.8
+			ur2x = position[j][0]*1.2
+			lr2y = position[j][1]*.8
+			ur2y = position[j][1]*1.2
+			lr2z = position[j][2]*.8
+			ur2z = position[j][2]*1.2
+			if ((lr1x==lr2x) or (lr1y==lr2y)) and (lr2z>lr1z):
+				key = (lr2x,ur2x,lr2y,ur2y,lr2z,ur2z,lr1x,ur1x,lr1y,ur1y,lr1z,ur1z)
+			elif ((lr2x>lr1x) or (lr2y>lr1y)): 
+				key = (lr2x,ur2x,lr2y,ur2y,lr2z,ur2z,lr1x,ur1x,lr1y,ur1y,lr1z,ur1z)
+			else:
+				key = (lr1x,ur1x,lr1y,ur1y,lr1z,ur1z,lr2x,ur2x,lr2y,ur2y,lr2z,ur2z)
+			"""if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])) and (position[j][2]>position[j-1][2]):
 				key = str(position[j])+str(position[j-1])
 			elif ((position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1])):
 				key = str(position[j])+str(position[j-1])
 			else:
 				key = str(position[j-1])+str(position[j])
-			#add keys, side numbers as values to a dictionary
+			#add keys, side numbers as values to a dictionary"""			
 			if key in vector_sides:
 				vector_sides[key].append(i)
 			else: 
 				vector_sides[key] = [i]
-	
+		for j in range(1,len(position)):
+			for k in vector_sides:
+				if (position[j][0]>=lr1x) and (position[j][0]<=ur1x) and (position[j][1]>=lr1y) and (position[j][1]<=ur1y) and (position[j][2]>=lr1z) and (position[j][2]<=ur1z) and (position[j-1][0]>=lr2x) and (position[j-1][0]<=ur2x) and (position[j-1][1]>=lr2y) and (position[j-1][1]<=ur2y) and (position[j-1][2]>=lr2z) and (position[j-1][2]<=ur2z):
+					vector_sides[key].append(i)
+				elif (position[j][0]>=lr2x) and (position[j][0]<=ur2x) and (position[j][1]>=lr2y) and (position[j][1]<=ur2y) and (position[j][2]>=lr2z) and (position[j][2]<=ur2z) and (position[j-1][0]>=lr1x) and (position[j-1][0]<=ur1x) and (position[j-1][1]>=lr1y) and (position[j-1][1]<=ur1y) and (position[j-1][2]>=lr1z) and (position[j-1][2]<=ur1z):
+					vector_sides[key].append(i)
+				else:
+					pass
 	for k in vector_sides:
 		#if a key has more than one value, two sides have folded to meet up
 		if len(vector_sides[k])>1:
@@ -344,8 +365,8 @@ if __name__ == "__main__":
 	print main(side_coordinates,actual_coordinates)"""
 
 	"""RECTANGULAR PRISM"""
-	side_coordinates = (([0.0, 0.0], [0.0, 2.0], [1.0, 2.0], [1.0, 0.0]), ([0.0, 0.0], [0.0, 2.0], [1.0, 2.0], [1.0, 0.0]), ([0.0, 0.0], [0.0, 2.0], [0.9999999999999998, 2.0], [1.0, 0.0]), ([0.0, 0.0], [0.0, 2.0], [0.9999999999999999, 2.0], [1.0, 0.0]))
-	actual_coordinates = (([3, 2], [3, 0], [2, 0], [2, 2]), ([3, 3], [5, 3], [5, 2], [3, 2]), ([2, 3], [2, 5], [3, 5], [3, 3]), ([2, 2], [0, 2], [0, 3], [2, 3]))
+	side_coordinates = (([0.0, 0.4], [0.0, 2.0], [1.5, 2.0], [1.0, 0.0]), ([0.0, 0.0], [0.0, 2.0], [1.0, 2.0], [1.0, 0.0]), ([0.0, 0.0], [0.0, 2.0], [0.9999999999999998, 2.0], [1.0, 0.0]), ([0.0, 0.0], [0.0, 2.0], [0.9999999999999999, 2.0], [1.0, 0.0]))
+	actual_coordinates = (([3, 2.2], [3, 0], [2, 0], [2, 2]), ([3, 3], [5, 3], [5, 2], [3, 2]), ([2, 3], [2, 5], [3, 5], [3, 3]), ([2, 2], [0, 2], [0, 3], [2, 3]))
 
 	print main(side_coordinates,actual_coordinates)
 
