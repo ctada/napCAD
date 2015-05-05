@@ -116,6 +116,4 @@ def find_folds(file_path, outside_points):
 					[outside_points[2], outside_points[3]],
 					[outside_points[3], outside_points[0]]]
 
-	print outside_contour
-	print len(outside_contour)
 	return outside_contour, fold_lines
