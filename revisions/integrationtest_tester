@@ -1,0 +1,4 @@
+from folding_v2 import make_dictionaries
+
+
+print 'wheeee'
