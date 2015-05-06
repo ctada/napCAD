@@ -1,4 +1,6 @@
-#This fuction finds faces
+"""
+Finds faces of 3d form, given the perimeter and foldlines
+"""
 
 
 
@@ -20,7 +22,6 @@ def calc_angle(v1, v2):
 def rotatePolygon(polygon,theta):
     """Rotates the given polygon which consists of corners represented as (x,y),
     around the ORIGIN, clock-wise, theta degrees"""
-    # theta=theta+90 #adding 90 fixes things for this specific case
     theta = math.radians(theta)
     if polygon[polygon.index([0,0])+1][1]>0:
     	theta=-theta
@@ -33,9 +34,7 @@ def rotatePolygon(polygon,theta):
 
 def face_finder(maincontour, foldlines):
 	#takes in a list of points of the main contour, and a list of point pairs giving fold lines
-
-
-	#Flip fold lines not sure why
+	#Flip fold lines, work out why
 	for line in enumerate(foldlines):
 		index=line[0]
 		foldline=line[1]
@@ -83,15 +82,9 @@ def face_finder(maincontour, foldlines):
 				totalfoldlines+=1
 
 		#If it's a base, FOR NOW just remove it
-		# print culledFaceLists
 		if totalfoldlines>=2:
 			thingsToRemove.append(faceindex)
 			rotatedFace=[(14.129948664096155, 174.25654808571758), (-0.0, 0.0), (182.02472359545007, -8.43769498715119e-15), (191.0729449989362, 179.1734625703078)]
-
-		# 	culledFaceLists.remove(face)
-
-		# print culledFaceLists
-
 
 		#If it's a regular side
 
@@ -128,7 +121,6 @@ def face_finder(maincontour, foldlines):
 						newface.append(newpoint)
 					rotatedFace=rotatePolygon(newface,angle)
 					alreadyRotated=True
-					# print point2
 
 		uprightFace=[]
 		upsideDown=False
@@ -158,25 +150,17 @@ def face_finder(maincontour, foldlines):
 				newy=newpoint[1]*-1
 			else:
 				newy=newpoint[1]
+
 			newpoint=[newx,newy]
-
-
-
-
-
 			uprightFace.append(newpoint)
 
 		rotatedFaceLists.append(uprightFace)
 
 		#Set 0,0 and the corresponding point at the correct spot
-		# faceindex=culledFaceLists.index(face)  #define this earlier
 		zeroindex=uprightFace.index([0,0])
 		shifter=(-zeroindex)
-		# if backwards ^ upsideDown:
+
 		originalShifter=shifter-1
-		# else:
-		# 	originalShifter=shifter
-# 
 # 
 		rotatedFaceLists[faceindex]=numpy.array(numpy.roll(rotatedFaceLists[faceindex],shifter,axis=0)).tolist()
 
@@ -184,8 +168,6 @@ def face_finder(maincontour, foldlines):
 
 		rotatedFaceLists[faceindex]=[rotatedFaceLists[faceindex][0]]+rotatedFaceLists[faceindex][1:][::-1]
 		if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
-		# if upsideDown ^ backwards:
-			# culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
 			culledFaceLists[faceindex]=numpy.array(culledFaceLists[faceindex][::-1]).tolist()
 
 	#Remove the bad faces
@@ -211,11 +193,6 @@ def face_finder(maincontour, foldlines):
 
 
 	return [FormattedNormalizedSides,FormattedOriginalSides]
-
-
-
-
-
 
 def breadth_first(startPoint, connectionDict): #Modified from http://stackoverflow.com/questions/8922060/breadth-first-search-trace-path
 
@@ -263,9 +240,3 @@ if __name__ == '__main__':
 	# a=face_finder(testshapeSquare,foldlinesSquare)
 	# a=face_finder(testshapeReal,foldlinesReal)
 	a=face_finder(newReal,newRealFolds)
-	print a[0]
-	print a[1]
-
-	# b=[[0,0],[1,1],[0,2],[-1,1]]
-	# print b
-	# print rotatePolygon(b,45)

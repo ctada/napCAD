@@ -14,22 +14,16 @@ def find_folds(file_path, outside_points):
 	"""
 	# Get the input image
 	image = cv2.imread(file_path)
-	image = cv2.resize(image, (0,0), fx=2.0, fy=2.0)
+	image = cv2.resize(image, (0,0), fx=1, fy=1)
 
 	# Convert the image to grayscale
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 	# Convert the grayscale image to binary
-	binary = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)[1]
-
-	#cv2.imshow('image', binary)
-	#cv2.waitKey(0)
+	binary = cv2.threshold(gray, 255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C + cv2.THRESH_BINARY,11)[1] #ajusts marginally to different lighting conditions
 
 	# Detect edges with Canny
 	edged = cv2.Canny(binary, 30, 200, apertureSize=3)
-
-	#cv2.imshow('image', edged)
-	#cv2.waitKey(0)
 
 	# Find the contours within the edged image
 	#__,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -48,9 +42,6 @@ def find_folds(file_path, outside_points):
 			vertices.append(rectCnt)
 			cv2.drawContours(image, [rectCnt], -1, (0, 255, 0), 1)
 			break
-
-	#cv2.imshow('image', image )
-	#cv2.waitKey(0)
 
 	outside = rectCnt
 
@@ -155,7 +146,7 @@ def find_folds(file_path, outside_points):
 	norm_outside_contour.append(tuple([inside_vertices[3][0], corner_points[4][1]]))
 	norm_outside_contour.append(tuple([inside_vertices[2][0], corner_points[4][1]]))
 
-	print norm_outside_contour, norm_fold_lines
 	return norm_outside_contour, norm_fold_lines
 
-#find_folds('napSketch.jpg', 12)
+if __name__=="__main__":
+	find_folds('napSketch.jpg', 12)
