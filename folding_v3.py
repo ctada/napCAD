@@ -254,7 +254,7 @@ def output(theta,final_list):
 			x.append(j[0])
 			y.append(j[1])
 			z.append(j[2])
-	return theta,x,y,z
+	return x,y,z
 
 def check_sides(run,temp,theta,fin):
 	"""Recursive function takes in each side and continuously checks for sides to meet up
@@ -273,27 +273,6 @@ def check_sides(run,temp,theta,fin):
 		position = run[i][2]
 		#create keys of the sets of two points that define each line in a side
 		for j in range(1,len(position)):
-			"""lr1x = position[j-1][0]*.8
-			ur1x = position[j-1][0]*1.2
-			lr1y = position[j-1][1]*.8
-			ur1y = position[j-1][1]*1.2
-			lr1z = position[j-1][2]*.8
-			ur1z = position[j-1][2]*1.2
-			lr2x = position[j][0]*.8
-			ur2x = position[j][0]*1.2
-			lr2y = position[j][1]*.8
-			ur2y = position[j][1]*1.2
-			lr2z = position[j][2]*.8
-			ur2z = position[j][2]*1.2
-
-
-
-			if ((lr1x==lr2x) or (lr1y==lr2y)) and (lr2z>lr1z):
-				key = (lr2x,ur2x,lr2y,ur2y,lr2z,ur2z,lr1x,ur1x,lr1y,ur1y,lr1z,ur1z)
-			elif ((lr2x>lr1x) or (lr2y>lr1y)): 
-				key = (lr2x,ur2x,lr2y,ur2y,lr2z,ur2z,lr1x,ur1x,lr1y,ur1y,lr1z,ur1z)
-			else:
-				key = (lr1x,ur1x,lr1y,ur1y,lr1z,ur1z,lr2x,ur2x,lr2y,ur2y,lr2z,ur2z)"""
 			if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])):
 				key = str(position[j][0])+str(position[j][1])+str(position[j-1][0])+str(position[j-1][1])
 			elif ((position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1])):
@@ -305,47 +284,13 @@ def check_sides(run,temp,theta,fin):
 				vector_sides[key].append(i)
 			else: 
 				vector_sides[key] = [i]	
-			"""if key in vector_sides:
-				j = vector_sides[key]
-				if i in j:
-					pass
-				else:
-					vector_sides[key].append(i)
-			else: 
-				vector_sides[key] = [i]
-	for i in run:
-		position = run[i][2]
-		for j in range(1,len(position)):
-			for k,v in vector_sides.iteritems():
-				if (position[j][0]>=k[0]) and (position[j][0]<=k[1]) and (position[j][1]>=k[2]) and (position[j][1]<=k[3]) and (position[j][2]>=k[4]) and (position[j][2]<=k[5]) and (position[j-1][0]>=k[6]) and (position[j-1][0]<=k[7]) and (position[j-1][1]>=k[8]) and (position[j-1][1]<=k[9]) and (position[j-1][2]>=k[10]) and (position[j-1][2]<=k[11]):
-					if i in v:
-						pass
-					else:
-						vector_sides[k].append(i)
-				elif (position[j][0]>=k[0]) and (position[j][0]<=k[1]) and (position[j][1]>=k[2]) and (position[j][1]<=k[3]) and (position[j][2]>=k[4]) and (position[j][2]<=k[5]) and (position[j-1][0]>=k[6]) and (position[j-1][0]<=k[7]) and (position[j-1][1]>=k[8]) and (position[j-1][1]<=k[9]) and (position[j-1][2]>=k[10]) and (position[j-1][2]<=k[11]):
-					if i in v:
-						pass
-					else:
-						vector_sides[k].append(i)
-				else:
-					pass
-	for k in vector_sides:
-		print 'side:',theta,vector_sides[k]
-		print 'x1:',(k[0]+k[1])/2
-		print 'y1:',(k[2]+k[3])/2
-		print 'z1:',(k[4]+k[5])/2
-		print 'x2:',(k[6]+k[7])/2
-		print 'y2:',(k[8]+k[9])/2
-		print 'z2:',(k[10]+k[11])/2"""
 	for k in vector_sides:
 		#if a key has more than one value, two sides have folded to meet up
 		if len(vector_sides[k])>1:
-			print vector_sides[k]
 			data.append(vector_sides[k][0])
 			data.append(vector_sides[k][1])
 	#check to see if all the sides have met another side, new_side_list returns those that have not
 	new_side_list = list(set(run.keys())-set(data))
-	print theta,vector_sides
 	#if there are no sides left to fold, return the final list of coordinates
 	if not new_side_list:
 		return theta,run
