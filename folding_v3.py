@@ -273,7 +273,7 @@ def check_sides(run,temp,theta,fin):
 		position = run[i][2]
 		#create keys of the sets of two points that define each line in a side
 		for j in range(1,len(position)):
-			lr1x = position[j-1][0]*.8
+			"""lr1x = position[j-1][0]*.8
 			ur1x = position[j-1][0]*1.2
 			lr1y = position[j-1][1]*.8
 			ur1y = position[j-1][1]*1.2
@@ -285,20 +285,27 @@ def check_sides(run,temp,theta,fin):
 			ur2y = position[j][1]*1.2
 			lr2z = position[j][2]*.8
 			ur2z = position[j][2]*1.2
+
+
+
 			if ((lr1x==lr2x) or (lr1y==lr2y)) and (lr2z>lr1z):
 				key = (lr2x,ur2x,lr2y,ur2y,lr2z,ur2z,lr1x,ur1x,lr1y,ur1y,lr1z,ur1z)
 			elif ((lr2x>lr1x) or (lr2y>lr1y)): 
 				key = (lr2x,ur2x,lr2y,ur2y,lr2z,ur2z,lr1x,ur1x,lr1y,ur1y,lr1z,ur1z)
 			else:
-				key = (lr1x,ur1x,lr1y,ur1y,lr1z,ur1z,lr2x,ur2x,lr2y,ur2y,lr2z,ur2z)
-			"""if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])) and (position[j][2]>position[j-1][2]):
-				key = str(position[j])+str(position[j-1])
+				key = (lr1x,ur1x,lr1y,ur1y,lr1z,ur1z,lr2x,ur2x,lr2y,ur2y,lr2z,ur2z)"""
+			if ((position[j][0]==position[j-1][0]) or (position[j][1]==position[j-1][1])):
+				key = str(position[j][0])+str(position[j][1])+str(position[j-1][0])+str(position[j-1][1])
 			elif ((position[j][0]>position[j-1][0]) or (position[j][1]>position[j-1][1])):
-				key = str(position[j])+str(position[j-1])
+				key = str(position[j][0])+str(position[j][1])+str(position[j-1][0])+str(position[j-1][1])
 			else:
-				key = str(position[j-1])+str(position[j])
-			#add keys, side numbers as values to a dictionary"""	
+				key = str(position[j-1][0])+str(position[j-1][1])+str(position[j][0])+str(position[j][1])
+			#add keys, side numbers as values to a dictionary
 			if key in vector_sides:
+				vector_sides[key].append(i)
+			else: 
+				vector_sides[key] = [i]	
+			"""if key in vector_sides:
 				j = vector_sides[key]
 				if i in j:
 					pass
@@ -306,7 +313,6 @@ def check_sides(run,temp,theta,fin):
 					vector_sides[key].append(i)
 			else: 
 				vector_sides[key] = [i]
-		print theta,vector_sides
 	for i in run:
 		position = run[i][2]
 		for j in range(1,len(position)):
@@ -323,17 +329,23 @@ def check_sides(run,temp,theta,fin):
 						vector_sides[k].append(i)
 				else:
 					pass
-	print vector_sides
+	for k in vector_sides:
+		print 'side:',theta,vector_sides[k]
+		print 'x1:',(k[0]+k[1])/2
+		print 'y1:',(k[2]+k[3])/2
+		print 'z1:',(k[4]+k[5])/2
+		print 'x2:',(k[6]+k[7])/2
+		print 'y2:',(k[8]+k[9])/2
+		print 'z2:',(k[10]+k[11])/2"""
 	for k in vector_sides:
 		#if a key has more than one value, two sides have folded to meet up
 		if len(vector_sides[k])>1:
-			print 'YESSSSSSS'
+			print vector_sides[k]
 			data.append(vector_sides[k][0])
 			data.append(vector_sides[k][1])
-	
 	#check to see if all the sides have met another side, new_side_list returns those that have not
 	new_side_list = list(set(run.keys())-set(data))
-	
+	print theta,vector_sides
 	#if there are no sides left to fold, return the final list of coordinates
 	if not new_side_list:
 		return theta,run
@@ -401,21 +413,16 @@ if __name__ == "__main__":
 	#side_coordinates = (([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]),([0,0],[0,6],[6,6],[6,0]))
 	#actual_coordinates = (([6,6],[0,6],[0,12],[6,12]),([6,12],[6,18],[12,18],[12,12]),([12,12],[18,12],[18,6],[12,6]),([12,6],[12,0],[6,0],[6,6]))
 
-	side_coordinates = (([0.0, 0.0], [29.872513615975315, -170.97553313343803],
-[190.68908980679365, -128.98709636493328], [170.7913480783877,
-31.86401452370699]), ([0.0, 0.0], [29.872513615975315,
--170.97553313343803], [190.68908980679365, -128.98709636493328],
-[170.7913480783877, 31.86401452370699]), ([0.0, 0.0],
-[21.00000000000001, 158.0], [198.0, 165.0], [178.0, 0.0]), ([0.0, 0.0],
-[-6.076800673605707, 147.9292820694174], [166.65852593657547,
-157.70204733182067], [176.40861656959956, 0.0]), ([0.0, 0.0],
-[14.129948664096155, 174.25654808571758], [191.0729449989362,
-179.1734625703078], [182.02472359545007, 0.0]))
-	actual_coordinates = (([205, 467], [200,
-305], [364, 278], [378, 451]), ([381, 633], [205, 645], [205, 467],
-[378, 451]), ([205, 467], [47, 488], [40, 665], [205, 645]), ([205,
-645], [209, 793], [382, 791], [381, 633]), ([381, 633], [555, 616],
-[557, 439], [378, 451]))
+	"""side_coordinates = (([0.0, 0.0], [0.0, 194.0], [176.00000000000003, 193.99999999999997], [176.0, 0.0]), ([0.0, 0.0], [0.0, 176.0], [173.0, 176.0], [173.0, 0.0]), ([0.0, 0.0], [0.0, 194.0], [165.00000000000003, 193.99999999999997], [165.0, 0.0]), ([0.0, 0.0], [0.0, 176.0], [147.99999999999997, 176.00000000000003], [148.0, 0.0]))
+	actual_coordinates = (([381, 451], [381, 645], [557, 645], [557, 451]), ([205, 451], [381, 451], [381, 278], [205, 278]), ([205, 645], [205, 451], [40, 451], [40, 645]), ([381, 645], [205, 645], [205, 793], [381, 793]))
+	print main(side_coordinates,actual_coordinates)"""
+
+	"""side_coordinates = (([0,0],[0,110],[100,100],[100,0]),([0,0],[0,110],[100,100],[100,0]),([0,0],[0,115],[100,100],[100,0]),([0,0],[0,110],[100,100],[100,0]))
+	actual_coordinates = (([100,200],[100,310],[200,300],[200,200]),([200,200],[310,200],[300,100],[200,100]),([200,100],[200,-15],[100,0],[100,100]),([100,100],[-10,100],[0,200],[100,200]))
+	print main(side_coordinates,actual_coordinates)"""
+
+	side_coordinates = (([0.0, 0.0], [0.0, 173.0], [176.00000000000003, 172.99999999999997], [176.0, 0.0]), ([0.0, 0.0], [0.0, 165.0], [194.0, 165.0], [194.0, 0.0]), ([0.0, 0.0], [0.0, 148.0], [176.0, 148.0], [176.0, 0.0]), ([0.0, 0.0], [0.0, 176.0], [194.0, 176.0], [194.0, 0.0]))
+	actual_coordinates = (([381, 451], [381, 278], [205, 278], [205, 451]), ([205, 451], [40, 451], [40, 645], [205, 645]), ([205, 645], [205, 793], [381, 793], [381, 645]), ([381, 645], [557, 645], [557, 451], [381, 451]))
 	print main(side_coordinates,actual_coordinates)
 
 	"""RECTANGULAR PRISM
