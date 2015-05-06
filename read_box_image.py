@@ -14,23 +14,28 @@ def find_folds(file_path, outside_points):
 	"""
 	# Get the input image
 	image = cv2.imread(file_path)
-	image = cv2.resize(image, (0,0), fx=0.25, fy=0.25)
-	newImage = image
+	image = cv2.resize(image, (0,0), fx=2.0, fy=2.0)
 
 	# Convert the image to grayscale
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 	# Convert the grayscale image to binary
-	binary = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)[1]
+	binary = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)[1]
+
+	#cv2.imshow('image', binary)
+	#cv2.waitKey(0)
 
 	# Detect edges with Canny
 	edged = cv2.Canny(binary, 30, 200, apertureSize=3)
+
+	#cv2.imshow('image', edged)
+	#cv2.waitKey(0)
 
 	# Find the contours within the edged image
 	#__,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
-	rectCnt = None
+	rectCnt = []
 	vertices = []
 
 	for c in cnts:
@@ -44,20 +49,10 @@ def find_folds(file_path, outside_points):
 			cv2.drawContours(image, [rectCnt], -1, (0, 255, 0), 1)
 			break
 
+	#cv2.imshow('image', image )
+	#cv2.waitKey(0)
+
 	outside = rectCnt
-
-	#Find the inner fold lines
-	count = 0
-	for c in cnts:
-		peri = cv2.arcLength(c, True)
-		approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-
-		# if contour has four points, classify as rectangle
-		if len(approx) == 4:
-			rectCnt = approx
-			vertices.append(rectCnt)
-			cv2.drawContours(image, [rectCnt], -1, (0, 255, 0), 1)
-			count += 1
 
 	# Iterate through outside contour to reorganize the data as a list of tuples  (to fit with folding code)
 	outside_contour = []
@@ -160,4 +155,7 @@ def find_folds(file_path, outside_points):
 	norm_outside_contour.append(tuple([inside_vertices[3][0], corner_points[4][1]]))
 	norm_outside_contour.append(tuple([inside_vertices[2][0], corner_points[4][1]]))
 
+	print norm_outside_contour, norm_fold_lines
 	return norm_outside_contour, norm_fold_lines
+
+#find_folds('napSketch.jpg', 12)
