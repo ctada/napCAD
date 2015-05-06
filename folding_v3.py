@@ -313,7 +313,10 @@ def check_sides(run,temp,theta,fin):
 		final = redone.copy()
 		final.update(new_run)
 		#call this function again to check if all sides have met another side
-		return check_sides(redone,new_run,new_t,final)
+		if theta < 360:
+			return check_sides(redone,new_run,new_t,final)
+		else:
+			return -1
 
 def make_sides(sides,theta):
 	"""Function iterates through the sides and folds each one, returning new coordinates
@@ -349,7 +352,10 @@ def main(sides,xy_coord):
 	#call function to check that sides have met up (prism has been folded)
 	final_sides = check_sides(run_fxn,{},theta,{})
 	#call function to output the final lists of x,y,z coordinates
-	return output(final_sides[0],final_sides[1])
+	if final_sides == -1:
+		return "Sorry, these sides never meet up!Here is what I am trying to fold:",xy_coord
+	else:
+		return output(final_sides[0],final_sides[1])
 	
 if __name__ == "__main__":
 
