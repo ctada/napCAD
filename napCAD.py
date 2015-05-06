@@ -10,7 +10,7 @@ from PIL import Image, ImageTk  # sudo pip install Pillow, sudo apt-get install 
 #from basic_cube import MVP_image_to_3D as mvp
 import read_box_image as rImg
 import stl
-import folding_v2 as fold
+import folding_v3 as fold
 import integrationtest as it
 import face_finder as ff
 import matplotlib, sys
@@ -42,8 +42,8 @@ def processImg():
     sides = rImg.find_folds("open_cube.jpg", int(vertNum))
 
     # faces=ff.face_finder([(1,0),(2,0),(2,1),(3,1),(3,2),(2,2),(2,3),(1,3),(1,2),(0,2),(0,1),(1,1)],[[(1,1),(2,1)],[(2,1),(2,2)],[(2,2),(1,2)],[(1,2),(1,1)]])
-    # faces=ff.face_finder(sides[0], sides[1])
-    faces=ff.face_finder([(364, 278), (200, 305), (205, 467), (47, 488), (40, 665), (205, 645),(209, 793), (382, 791), (381, 633), (555, 616), (557, 439), (378, 451)],[[(205, 467), (205, 645)], [(205, 645), (381, 633)], [(381, 633), (378,451)], [(378, 451), (205, 467)]])
+    faces=ff.face_finder(sides[0], sides[1])
+    # faces=ff.face_finder([(364, 278), (200, 305), (205, 467), (47, 488), (40, 665), (205, 645),(209, 793), (382, 791), (381, 633), (555, 616), (557, 439), (378, 451)],[[(205, 467), (205, 645)], [(205, 645), (381, 633)], [(381, 633), (378,451)], [(378, 451), (205, 467)]])
     x, y, z=fold.main(faces[0],faces[1])
     to_stl, triangles = stl.triangulation(x,y,z) #triangulates 3D points
 
