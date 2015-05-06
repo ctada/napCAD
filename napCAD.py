@@ -39,7 +39,7 @@ def processImg():
     d= VertexDialog(root) #asks for number of vertices in final form
     root.wait_window(d.top)
     vertNum = d.getNum() 
-    sides = rImg.find_folds("open_cube.jpg", int(vertNum))
+    sides = rImg.find_folds("napSketch.jpg", int(vertNum))
 
     # faces=ff.face_finder([(1,0),(2,0),(2,1),(3,1),(3,2),(2,2),(2,3),(1,3),(1,2),(0,2),(0,1),(1,1)],[[(1,1),(2,1)],[(2,1),(2,2)],[(2,2),(1,2)],[(1,2),(1,1)]])
     faces=ff.face_finder(sides[0], sides[1])
