@@ -40,10 +40,11 @@ def processImg():
     root.wait_window(d.top)
     vertNum = d.getNum() 
     sides = rImg.find_folds("open_cube.jpg", int(vertNum))
-  
-    faces=ff.face_finder(sides[0], sides[1])
+
+    # faces=ff.face_finder([(1,0),(2,0),(2,1),(3,1),(3,2),(2,2),(2,3),(1,3),(1,2),(0,2),(0,1),(1,1)],[[(1,1),(2,1)],[(2,1),(2,2)],[(2,2),(1,2)],[(1,2),(1,1)]])
+    # faces=ff.face_finder(sides[0], sides[1])
+    faces=ff.face_finder([(364, 278), (200, 305), (205, 467), (47, 488), (40, 665), (205, 645),(209, 793), (382, 791), (381, 633), (555, 616), (557, 439), (378, 451)],[[(205, 467), (205, 645)], [(205, 645), (381, 633)], [(381, 633), (378,451)], [(378, 451), (205, 467)]])
     x, y, z=fold.main(faces[0],faces[1])
-    
     to_stl, triangles = stl.triangulation(x,y,z) #triangulates 3D points
 
     fig = plt.figure() #creates figure 
@@ -71,8 +72,8 @@ def show_frame():
     edged = cv2.Canny(binary, 30, 200) # Detect edges with Canny
 
     # Find the 10 contours within the edged image
-    __,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    #(cnts,_) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #__,cnts,_ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    (cnts,_) = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = sorted(cnts, key = cv2.contourArea, reverse = True)#[:10]
     rectCnt = None
     count = 0

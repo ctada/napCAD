@@ -20,6 +20,7 @@ def calc_angle(v1, v2):
 def rotatePolygon(polygon,theta):
     """Rotates the given polygon which consists of corners represented as (x,y),
     around the ORIGIN, clock-wise, theta degrees"""
+    # theta=theta+90 #adding 90 fixes things for this specific case
     theta = math.radians(theta)
     if polygon[polygon.index([0,0])+1][1]>0:
     	theta=-theta
@@ -67,20 +68,18 @@ def face_finder(maincontour, foldlines):
 	for face in culledFaceLists:
 		faceindex=culledFaceLists.index(face)
 		totalfoldlines=0
-		print face
 		for point in enumerate(face):
 			point2=point[1]
 			index=point[0]
 			point1=face[index-1]
 			if [point1,point2] in foldlines or [point2,point1] in foldlines:
 				totalfoldlines+=1
-		print totalfoldlines
 
 		#If it's a base, FOR NOW just remove it
 		# print culledFaceLists
-
 		if totalfoldlines>=2:
 			thingsToRemove.append(faceindex)
+			rotatedFace=[(14.129948664096155, 174.25654808571758), (-0.0, 0.0), (182.02472359545007, -8.43769498715119e-15), (191.0729449989362, 179.1734625703078)]
 
 		# 	culledFaceLists.remove(face)
 
@@ -125,7 +124,6 @@ def face_finder(maincontour, foldlines):
 					# print point2
 
 		uprightFace=[]
-
 		upsideDown=False
 		backwards=False
 		for point in rotatedFace:
@@ -178,7 +176,6 @@ def face_finder(maincontour, foldlines):
 		culledFaceLists[faceindex]=numpy.array(numpy.roll(culledFaceLists[faceindex],originalShifter,axis=0)).tolist()
 
 		rotatedFaceLists[faceindex]=[rotatedFaceLists[faceindex][0]]+rotatedFaceLists[faceindex][1:][::-1]
-
 		if (upsideDown and backwards) or (not upsideDown and not backwards): #Two opposite direction flips or none
 		# if upsideDown ^ backwards:
 			# culledFaceLists[faceindex]=numpy.array([culledFaceLists[faceindex][0]]+culledFaceLists[faceindex][1:][::-1]).tolist()
@@ -250,10 +247,15 @@ if __name__ == '__main__':
 	testshapeReal=[(364, 278), (200, 305), (205, 467), (47, 488), (40, 665), (205, 645),(209, 793), (382, 791), (381, 633), (555, 616), (557, 439), (378, 451)]
 	foldlinesReal=[[(205, 467), (205, 645)], [(205, 645), (381, 633)], [(381, 633), (378,451)], [(378, 451), (205, 467)]]
 
+	newReal=[(381, 645), (557, 645), (557, 451), (381, 451), (381, 278), (205, 278), (205, 451), (40, 451), (40, 645), (205, 645), (205, 793), (381, 793)]
+	newRealFolds= [[(205, 451), (381, 451)], [(381, 451), (381, 645)], [(381, 645), (205, 645)], [(205, 645), (205, 451)]]
+
+
 	# a=face_finder(testshapeRect,foldlinesRect)
 	# a=face_finder(testshapePyramid,foldlinesPyramid)
 	# a=face_finder(testshapeSquare,foldlinesSquare)
-	a=face_finder(testshapeReal,foldlinesReal)
+	# a=face_finder(testshapeReal,foldlinesReal)
+	a=face_finder(newReal,newRealFolds)
 	print a[0]
 	print a[1]
 
