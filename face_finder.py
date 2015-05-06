@@ -34,6 +34,13 @@ def rotatePolygon(polygon,theta):
 def face_finder(maincontour, foldlines):
 	#takes in a list of points of the main contour, and a list of point pairs giving fold lines
 
+
+	#Flip fold lines not sure why
+	for line in enumerate(foldlines):
+		index=line[0]
+		foldline=line[1]
+		foldlines[index]=[foldline[1],foldline[0]]
+
 	#dictionary of links, both contour and folded
 	connectionDict={}
 	for point in enumerate(maincontour):
@@ -248,7 +255,7 @@ if __name__ == '__main__':
 	foldlinesReal=[[(205, 467), (205, 645)], [(205, 645), (381, 633)], [(381, 633), (378,451)], [(378, 451), (205, 467)]]
 
 	newReal=[(381, 278), (205, 278), (205, 451), (40, 451), (40, 645), (205, 645), (205, 793), (381, 793),(381, 645), (557, 645), (557, 451), (381, 451)]
-	newRealFolds= [[ (205, 645),(381, 645)],[ (205, 451),(205, 645)],[ (381, 645),(381, 451)],[ (381, 451),(205, 451)]]
+	newRealFolds= [[ (381, 645),(205, 645)],[ (205, 645),(205, 451)],[ (381, 451),(381, 645)],[(205, 451), (381, 451)]]
 
 
 	# a=face_finder(testshapeRect,foldlinesRect)
